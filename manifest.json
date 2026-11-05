@@ -1,0 +1,17 @@
+{
+  "name": "Quincaillerie Générale Gouye Tene - Q2GT",
+  "short_name": "Q2GT",
+  "description": "Gestion Quincaillerie Générale Gouye Tene",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0A3D2A",
+  "theme_color": "#0A3D2A",
+  "icons": [
+    {
+      "src": "IMG-20261105-WA7049.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
