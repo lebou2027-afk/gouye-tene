@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gouye Tene Gestion</title>
+<style>
+:root{--g:#0b4a2b;--gd:#07331d;--gl:#e7f1ea;--y:#d4a017;--yl:#f6e7b4;--bg:#f4f6f2;--tx:#1b2a21;--mu:#66756b;--bd:#d9e0d9;--rd:#b3261e;--ok:#1b7f3b}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx);font-size:14px}
+button,input,select,textarea{font:inherit}
+.hide{display:none!important}
+#login{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,var(--gd),var(--g) 70%);color:#fff}
+#login h1{margin:6px 0 2px;font-size:24px;text-align:center;color:var(--y);letter-spacing:.5px}
+#login .sub{color:#cfe3d6;margin-bottom:18px;text-align:center}
+.logo{width:64px;height:64px;border-radius:50%;background:var(--y);color:var(--gd);display:grid;place-items:center;font-weight:800;font-size:26px;border:3px solid #fff}
+.stores{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;width:100%;max-width:560px;margin-bottom:16px}
+.sc{background:#ffffff14;border:2px solid #ffffff30;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;color:#fff}
+.sc .ic{font-size:38px;line-height:1.1}.sc b{display:block;margin-top:6px;color:#fff;font-size:14px}
+.sc.on{background:var(--y);border-color:#fff}.sc.on b{color:var(--gd)}
+.pad{width:230px}
+.dots{display:flex;justify-content:center;gap:10px;margin:6px 0 10px;height:16px}
+.dots i{width:13px;height:13px;border-radius:50%;border:2px solid var(--y);display:block}.dots i.f{background:var(--y)}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.keys button{padding:9px 0;border-radius:10px;border:0;background:#ffffff1f;color:#fff;font-size:18px;font-weight:600;cursor:pointer}
+.keys button.ok{background:var(--y);color:var(--gd)}
+.err{color:#ffd2cf;min-height:18px;text-align:center;margin-top:8px;font-size:13px}
+#app{display:flex;min-height:100vh}
+aside{width:236px;background:var(--gd);color:#e5efe8;flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:auto}
+aside .brand{padding:14px;border-bottom:3px solid var(--y);color:var(--y);font-weight:800;font-size:13px;line-height:1.25}
+aside nav button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;color:inherit;padding:10px 14px;cursor:pointer;border-left:4px solid transparent}
+aside nav button:hover{background:#ffffff14}
+aside nav button.on{background:var(--g);border-left-color:var(--y);color:#fff;font-weight:700}
+.wrap{flex:1;min-width:0;display:flex;flex-direction:column}
+header{background:var(--g);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:3px solid var(--y);position:sticky;top:0;z-index:5}
+header .burger{display:none;background:none;border:0;color:#fff;font-size:22px;cursor:pointer}
+header .ttl{flex:1;font-weight:700}
+header .who{font-size:12px;color:var(--yl);text-align:right}
+main{padding:16px;max-width:1250px;width:100%}
+.btn{border:1px solid var(--bd);background:#fff;border-radius:8px;padding:7px 12px;cursor:pointer;color:var(--tx)}
+.btn:hover{background:var(--gl)}
+.btn.pri{background:var(--g);color:#fff;border-color:var(--g)}.btn.pri:hover{background:var(--gd)}
+.btn.gold{background:var(--y);color:var(--gd);border-color:var(--y);font-weight:700}
+.btn.dg{color:var(--rd)}
+.btn.sm{padding:4px 8px;font-size:12px}
+.ph{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.ph h2{margin:0;color:var(--g);flex:1;min-width:160px}
+.ph h2 small{display:block;font-size:12px;font-weight:500;color:var(--mu)}
+.ph input[type=search],.ph input[type=text]{padding:8px 10px;border:1px solid var(--bd);border-radius:8px;min-width:180px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.card{background:#fff;border:1px solid var(--bd);border-left:5px solid var(--y);border-radius:10px;padding:12px}
+.card small{color:var(--mu);display:block}.card b{font-size:18px;color:var(--g)}
+.card.al{border-left-color:var(--rd)}.card.al b{color:var(--rd)}
+.box{background:#fff;border:1px solid var(--bd);border-radius:10px;overflow:auto;margin-bottom:14px}
+.box{border:2px solid var(--g)}
+.box th,.box td,.lt th,.lt td{border:1px solid #8fa89a}
+.box th,.lt th{border-color:#3f7a58}
+.box tbody tr:nth-child(even) td{background:#f6f9f6}
+.box h3{margin:0;padding:10px 12px;background:var(--gl);color:var(--g);font-size:14px;border-bottom:1px solid var(--bd)}
+table{border-collapse:collapse;width:100%}
+th,td{padding:8px 10px;border-bottom:1px solid #edf1ed;text-align:left;white-space:nowrap}
+th{background:var(--g);color:#fff;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.3px}
+tr:hover td{background:#fbfcfa}
+td.r,th.r{text-align:right}
+tfoot td{background:var(--yl);font-weight:700}
+.act{display:flex;gap:4px;flex-wrap:wrap}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.t-ok{background:#d9f0e0;color:var(--ok)}.t-w{background:var(--yl);color:#7a5a00}.t-b{background:#fadad7;color:var(--rd)}.t-n{background:#e8ece9;color:var(--mu)}
+.empty{padding:26px;text-align:center;color:var(--mu)}
+.ov{position:fixed;inset:0;background:#0009;z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 10px}
+.md{background:#fff;border-radius:12px;width:100%;max-width:760px;padding:16px;border-top:5px solid var(--y)}
+.md h3{margin:0 0 12px;color:var(--g)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+label{display:block;font-size:12px;color:var(--mu);font-weight:600}
+label input,label select,label textarea{display:block;width:100%;margin-top:3px;padding:8px;border:1px solid var(--bd);border-radius:7px;font-weight:400;color:var(--tx);background:#fff}
+label.full{grid-column:1/-1}
+.mb{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+.addl{display:grid;grid-template-columns:2fr .7fr 1fr auto;gap:8px;align-items:end;margin:12px 0;padding:10px;background:var(--gl);border-radius:8px}
+.addl input{display:block;width:100%;margin-top:3px;padding:8px;border:1px solid var(--bd);border-radius:7px}
+.lt input{width:80px;padding:5px;border:1px solid var(--bd);border-radius:6px;text-align:right}
+.lt input.nm{width:100%;min-width:150px;text-align:left}
+.tot{text-align:right;font-size:16px;margin-top:8px}.tot b{color:var(--g)}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--gd);color:#fff;padding:10px 18px;border-radius:30px;border:2px solid var(--y);z-index:99;display:none}
+#pa{display:none}
+.doc{font-size:12px;color:#000;font-family:Arial,sans-serif}
+.dh{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid var(--g);padding-bottom:10px}
+.dl{display:flex;gap:12px;align-items:flex-start}.dl .lg{max-height:72px;max-width:110px;object-fit:contain}.dl .cn{font-size:20px;font-weight:800;color:var(--g)}.dl div{line-height:1.45}
+.dr{text-align:right;line-height:1.5}.dr .dt{font-size:20px;font-weight:800;color:var(--g)}
+.dr .st{display:inline-block;margin-top:2px;padding:1px 10px;border:2px solid var(--y);font-weight:800;color:#7a5a00}
+.dc{margin:14px 0;padding:8px 10px;border:1px solid #999;border-left:5px solid var(--y)}
+.doc table{margin-top:6px}.doc th{background:var(--g)!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.doc td,.doc th{white-space:normal;border:1px solid #ccc}
+.dtot{margin:10px 0 0 auto;width:260px}.dtot div{display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #ddd}
+.dtot .g{background:var(--g)!important;color:#fff;font-weight:800;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.dft{margin-top:26px;display:flex;justify-content:space-between;gap:20px}.dft div{width:45%;border-top:1px solid #000;padding-top:4px;text-align:center}
+.dnote{text-align:center;margin-top:18px;color:#444}
+.inv{--g:#0b4a2b;--o:#7a5c00;--y:#d4a017;color:#000;font-weight:700;font-family:'Segoe UI',Arial,sans-serif;font-size:14px;display:flex;flex-direction:column;background:#fff;padding:2px}
+.inv,.inv *{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}
+.inv .stp{display:flex;flex-direction:column;gap:3px}.inv .stp i{display:block;height:4px;border-radius:2px}
+.inv .stp i:nth-child(1){background:#0b4a2b}.inv .stp i:nth-child(2){background:#d4a017}.inv .stp i:nth-child(3){background:#0b4a2b}
+.inv .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:14px 0 10px;border-bottom:2px solid var(--g)}
+.inv .hl{display:flex;gap:12px;align-items:flex-start}.inv .lg{width:72px;height:72px;object-fit:contain;border:1px solid #e5e5e5;flex-shrink:0}
+.inv .cn{font-size:24px;font-weight:800;color:var(--g);line-height:1.15;text-transform:uppercase}
+.inv .ad{font-weight:800;margin-top:6px;font-size:14px}.inv .lgl{font-size:12.5px;font-weight:700;color:#000;margin-top:2px}
+.inv .hr{text-align:right;white-space:nowrap}.inv .t1{font-size:32px;font-weight:800;color:var(--g);line-height:1}
+.inv .nu{color:var(--o);font-weight:800;font-size:17px;margin-top:6px}.inv .dt{font-weight:800;margin-top:3px;font-size:15px}
+.inv .bd{display:inline-block;margin-top:6px;border:1px solid;border-radius:4px;padding:2px 12px;font-weight:800;font-size:14px}
+.inv .bx2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.inv .bx,.inv .wd{border:1px solid var(--g);border-radius:6px;padding:8px 10px;line-height:1.55}
+.inv h5{margin:0 0 3px;color:var(--g);font-size:12.5px;letter-spacing:.5px;text-transform:uppercase;font-weight:800}
+.inv .tb{min-height:100mm;border:2px solid var(--g);background:linear-gradient(var(--g),var(--g)) 5% 0/1px 100% no-repeat,linear-gradient(var(--g),var(--g)) 14% 0/1px 100% no-repeat,linear-gradient(var(--g),var(--g)) 66% 0/1px 100% no-repeat,linear-gradient(var(--g),var(--g)) 74% 0/1px 100% no-repeat,linear-gradient(var(--g),var(--g)) 86% 0/1px 100% no-repeat}
+.inv table{width:100%;border-collapse:collapse;table-layout:fixed}
+.inv th{background:var(--g);color:#fff;font-size:12.5px;letter-spacing:.4px;padding:6px 4px;border-left:1px solid #ffffff55;text-align:center;white-space:nowrap;overflow:hidden}
+.inv td{padding:6px 8px;font-weight:800;color:#000;border:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inv tbody tr:nth-child(even) td{background:#eef2ee}
+.inv td.r{text-align:right}.inv td.c{text-align:center}.inv td.b{font-weight:800}
+.inv tr{page-break-inside:avoid}
+.inv .bt{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;align-items:start}
+.inv .wd i{display:block;margin-top:3px;font-size:14px;font-weight:800;color:#000}
+.inv .tt{border:2px solid var(--g);border-radius:6px;overflow:hidden}
+.inv .row{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;font-size:15px}
+.inv .row+.row{border-top:1px solid #ddd}.inv .row.br{color:var(--o)}
+.inv .row.bar{font-size:17px;font-weight:800;color:#fff;border-top:0}.inv .bar.g{background:var(--g)}.inv .bar.o{background:var(--y);color:var(--g)}
+.inv .sg{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}
+.inv .sg div{color:var(--g);font-weight:800;font-size:12.5px;text-transform:uppercase}.inv .sg div:after{content:'';display:block;height:32px;border-bottom:1.5px solid #222}
+.inv .ft{margin-top:auto;padding-top:26px}
+.inv .fb{border-top:2px solid var(--g);margin:0 0 8px;padding-top:8px;display:grid;grid-template-columns:1.6fr 1fr;gap:20px;font-size:12.5px;line-height:1.5}
+.inv .fb .m{color:var(--g);font-weight:800}
+@media print{.inv{min-height:270mm}}
+.tk{width:72mm;font-family:monospace;font-size:13px;font-weight:700;color:#000}.tk h4{text-align:center;margin:0 0 4px;font-size:14px}.tk hr{border:0;border-top:1px dashed #000}.tk .c{text-align:center}
+.tk table th,.tk table td{border:0;padding:1px 2px;font-size:12px;font-weight:700;background:none!important;color:#000!important}
+@media(max-width:600px){.md{padding:10px}.ov{padding:8px 4px}}
+@media(max-width:900px){aside{position:fixed;left:-250px;z-index:30;transition:left .2s}aside.open{left:0}header .burger{display:block}.addl{grid-template-columns:1fr 1fr}}
+@media print{body>*:not(#pa){display:none!important}#pa{display:block!important}}
+/* bordures sur toutes les cases */
+.box th,.box td,.lt th,.lt td{border:1px solid #0b4a2b}
+.box th,.lt th{border-color:#d4a017}
+.box{border:2px solid #0b4a2b}
+.card{border:1.5px solid #0b4a2b;border-left:5px solid var(--y)}
+.card.al{border-left-color:var(--rd)}
+label input,label select,label textarea,.ph input[type=search],.ph input[type=text],.addl input,.lt input{border:1.5px solid #0b4a2b}
+.btn{border:1.5px solid #0b4a2b}.btn.pri{border-color:var(--gd)}.btn.gold{border-color:var(--gd)}
+.tag{border:1px solid currentColor}
+.md{border:2px solid #0b4a2b;border-top:5px solid var(--y)}
+.wd,.bx{border-color:#0b4a2b}
+/* lignes compactes */
+.box th,.box td{padding:4px 8px;font-size:13px;line-height:1.25}
+.box th{padding:5px 8px;font-size:11.5px}
+.box .act{flex-wrap:nowrap;gap:3px}
+.box .btn.sm{padding:2px 6px;font-size:11.5px;line-height:1.3;border-radius:6px}
+.box .tag{padding:1px 7px;font-size:11px}
+.box .lt input{padding:2px 5px}
+/* écritures plus grandes, gras foncé */
+:root{--tx:#000;--mu:#1f2e26}
+body{font-size:16px;font-weight:700;color:#000}
+aside nav button{font-size:15.5px;font-weight:700}
+aside .brand{font-size:14.5px}
+header .ttl{font-size:18px}header .who{font-size:13.5px;font-weight:700}
+.ph h2{font-size:25px}.ph h2 small{font-size:14px;font-weight:700;color:var(--mu)}
+.ph input[type=search],.ph input[type=text]{font-size:15.5px;font-weight:700;color:#000}
+.btn{font-size:15px;font-weight:700;color:#000}.btn.pri,.btn.pri:hover{color:#fff}.btn.dg{color:var(--rd)}
+.btn.sm,.box .btn.sm{font-size:13.5px;font-weight:700;padding:3px 7px}
+.box th{font-size:13.5px;font-weight:800}
+.box td{font-size:15.5px;font-weight:700;color:#000}
+.box h3{font-size:16.5px;font-weight:800}
+.tag,.box .tag{font-size:12.5px;font-weight:800}
+.card small{font-size:14px;font-weight:700;color:var(--mu)}.card b{font-size:22px;font-weight:800}
+label{font-size:14px;font-weight:800;color:var(--mu)}
+label input,label select,label textarea,.addl input,.lt input{font-size:15.5px;font-weight:700;color:#000}
+.md h3{font-size:20px}
+.empty{font-size:15.5px;font-weight:700;color:var(--mu)}
+.tot{font-size:18px;font-weight:700}
+#toast{font-size:15.5px;font-weight:700}
+
+.rtabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.rbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px;background:#fff;border:1px solid var(--bd);border-radius:10px;padding:8px}
+.rbar input{padding:6px;border:1px solid var(--bd);border-radius:8px}
+.rp{font-family:system-ui,sans-serif;color:#000;font-size:11px}
+.rph{display:flex;justify-content:space-between;gap:10px;border-bottom:3px solid #0b4a2b;padding-bottom:6px;margin-bottom:8px}
+.rph h2{margin:0;color:#0b4a2b;font-size:17px}
+.rpc{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}.rpc div{border:1px solid #0b4a2b;border-left:4px solid #d4a017;padding:3px 8px}
+.rpt{width:100%;border-collapse:collapse}.rpt th{background:#0b4a2b!important;color:#fff!important;font-size:10px;padding:4px 5px;text-align:left;text-transform:uppercase;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.rpt td{border:1px solid #999;padding:3px 5px}.rpt .r{text-align:right}
+.rpt tfoot td{background:#f6e7b4!important;font-weight:800;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.rpt .tag{border:0;padding:0}.rpn{font-size:10px;color:#444;margin:6px 0 0}
+</style>
+<style>
+.pos{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;align-items:start}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:10px;max-height:60vh;overflow:auto}
+.pt{background:#fff;border:1.5px solid #0b4a2b;border-left:5px solid var(--y);border-radius:10px;padding:8px;cursor:pointer;text-align:left;color:#000}
+.pt:hover{background:var(--gl)}.pt b{display:block;font-size:14px;line-height:1.2}.pt span{display:block;font-size:12.5px;color:var(--mu)}.pt .pr{color:var(--g);font-weight:800;font-size:15px}.pt.out{opacity:.55;border-left-color:var(--rd)}
+.pcart{position:sticky;top:70px}
+@media(max-width:900px){.pos{grid-template-columns:1fr}.pcart{position:static}}
+</style>
+<style id="pgs"></style>
+</head>
+<body>
+
+<div id="login">
+  <div class="logo">GT</div>
+  <h1>QUINCAILLERIE GÉNÉRALE<br>GOUYE TENE</h1>
+  <div class="sub">Choisissez un magasin puis saisissez votre code</div>
+  <div class="stores" id="lstores"></div>
+  <div class="pad">
+    <div class="dots" id="dots"></div>
+    <div class="keys" id="keys"></div>
+    <div class="err" id="lerr"></div>
+  </div>
+</div>
+
+<div id="app" class="hide">
+  <aside id="side">
+    <div class="brand">QUINCAILLERIE GÉNÉRALE<br>GOUYE TENE</div>
+    <nav id="nav"></nav>
+  </aside>
+  <div class="wrap">
+    <header>
+      <button class="burger" onclick="$('#side').classList.toggle('open')">☰</button>
+      <div class="ttl" id="htitle"></div>
+      <div class="who" id="hwho"></div>
+      <button class="btn sm" onclick="logout()">Quitter</button>
+    </header>
+    <main id="main"></main>
+  </div>
+</div>
+
+<div id="mroot"></div>
+<div id="toast"></div>
+<div id="pa"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const today=()=>new Date().toISOString().slice(0,10);
+const num=n=>(Math.round(+n||0)).toLocaleString('fr-FR');
+const fmt=n=>num(n)+' FCFA';
+const fd=d=>d?d.split('-').reverse().join('/'):'';
+const MEM={};
+function lg(k,d){try{const v=localStorage.getItem(k);if(v)return JSON.parse(v)}catch(e){}return MEM[k]!==undefined?JSON.parse(MEM[k]):d}
+function ls(k,v){MEM[k]=JSON.stringify(v);try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+/* ---------- données ---------- */
+const MODES=['Espèces','Wave','Orange Money','Chèque','Virement'];
+const ROLES={admin:'Administrateur',gerant:'Gérant',vendeur:'Vendeur'};
+const ICONS=['🏪','🏬','🏗️','🔧','🧰','🏠','🚚','📦'];
+let G=lg('gt_g',null)||{stores:[{id:'s1',name:'Magasin Principal',icon:'🏪'},{id:'s2',name:'Magasin 2',icon:'🏬'}],users:[{id:'u1',name:'Administrateur',code:'1234',role:'admin',stores:['*']}]};
+ls('gt_g',G);
+let D=null,SID=null,USER=null,page='dash',Q='',cur=null;
+
+function newData(){return{clients:[],fournisseurs:[],produits:[],depots:[{id:uid(),name:'Dépôt principal',addr:'',resp:''}],docs:{facture:[],proforma:[],bc:[],bl:[],devis:[]},charges:[],argent:[],reappro:[],paiements:[],counters:{},company:{name:'QUINCAILLERIE GÉNÉRALE GOUYE TENE',logo:'',addr1:'',addr2:'',tel:'',tel2:'',email:'',ninea:'',rc:'',gerant:'',footer:'Merci de votre confiance'}}}
+function loadStore(id){const d=lg('gt_d_'+id,null)||newData();const b=newData();for(const k in b)if(d[k]===undefined)d[k]=b[k];for(const k in b.docs)if(!d.docs[k])d.docs[k]=[];for(const k in b.company)if(d.company[k]===undefined)d.company[k]=b.company[k];D=d}
+function saveG(){ls('gt_g',G)}
+function save(){ls('gt_d_'+SID,D)}
+function toast(m,ms){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',ms||2400)}
+
+/* ---------- connexion ---------- */
+let LS=G.stores[0].id,CODE='';
+function drawLogin(){
+  if(!G.stores.find(s=>s.id===LS))LS=G.stores[0].id;
+  $('#lstores').innerHTML=G.stores.map(s=>`<div class="sc ${s.id===LS?'on':''}" onclick="LS='${s.id}';drawLogin()"><div class="ic">${s.icon}</div><b>${esc(s.name)}</b></div>`).join('');
+  $('#dots').innerHTML=[0,1,2,3,4,5].map(i=>`<i class="${i<CODE.length?'f':''}"></i>`).join('');
+  $('#keys').innerHTML=[1,2,3,4,5,6,7,8,9].map(n=>`<button onclick="kp('${n}')">${n}</button>`).join('')+`<button onclick="kp('x')">⌫</button><button onclick="kp('0')">0</button><button class="ok" onclick="kp('ok')">OK</button>`;
+}
+function kp(k){
+  $('#lerr').textContent='';
+  if(k==='x')CODE=CODE.slice(0,-1);
+  else if(k==='ok')return tryLogin();
+  else if(CODE.length<6)CODE+=k;
+  drawLogin();
+}
+document.addEventListener('keydown',e=>{if($('#login').classList.contains('hide'))return;if(/^\d$/.test(e.key))kp(e.key);else if(e.key==='Backspace')kp('x');else if(e.key==='Enter')kp('ok')});
+function tryLogin(){
+  const u=G.users.find(u=>u.code===CODE);
+  if(!u||!(u.stores.includes('*')||u.stores.includes(LS))){CODE='';drawLogin();$('#lerr').textContent='Code incorrect ou accès refusé à ce magasin';return}
+  USER=u;SID=LS;CODE='';loadStore(SID);ls('gt_last',{u:u.id,s:SID});
+  $('#login').classList.add('hide');$('#app').classList.remove('hide');page='dash';render();
+}
+function logout(){USER=null;D=null;closeM();$('#app').classList.add('hide');$('#login').classList.remove('hide');drawLogin()}
+
+/* ---------- navigation ---------- */
+const PAGES=[
+ ['dash','Tableau de bord','📊'],['vente','Vente rapide','⚡'],['clients','Clients','👥'],['fournisseurs','Fournisseurs','🏭'],['produits','Produits et stocks','📦'],['reappro','Ré-approvisionner','🔄'],
+ ['facture','Factures','🧾'],['proforma','Factures proforma','📄'],['bc','Bons de commande','📝'],['bl','Bons de livraison','🚚'],['devis','Devis','💬'],
+ ['rap_ventes','Rapports ventes','📈'],['rap_clients','Rapports clients','🧮'],['rap_achats','Rapports achats','🛒'],['rap_stock','Rapports stock','📋'],['rap_finance','Rapports finances','🏦'],['rap_docs','Rapports documents','🗂️'],
+ ['charges','Charges et dépenses','💸'],['argent','Dépôt d\'argent','💰'],['depots','Dépôts','🏢'],['users','Utilisateurs','🔐'],['params','Paramètres','⚙️']];
+const ACC={vendeur:['dash','vente','clients','produits','facture','proforma','devis','bl'],gerant:PAGES.map(p=>p[0]).filter(k=>k!=='users'&&k!=='params'),admin:PAGES.map(p=>p[0])};
+const ACTS=[['v','Voir'],['a','Ajouter'],['m','Modifier'],['s','Supprimer'],['o','Opérations']];
+const PGP=PAGES.filter(p=>p[0]!=='users'&&p[0]!=='params');
+function defPerms(role){const o={};(ACC[role]||[]).forEach(k=>{if(k!=='users'&&k!=='params')o[k]=k==='dash'?{v:1}:{v:1,a:1,m:1,s:1,o:1}});return o}
+const permsOf=u=>u.perms||defPerms(u.role);
+function can(p,a){if(!USER)return false;if(USER.role==='admin')return true;if(p==='users'||p==='params')return false;const x=permsOf(USER)[p];return!!(x&&x[a])}
+function go(p){if(!can(p,'v'))return toast('Accès non autorisé');page=p;Q='';$('#side').classList.remove('open');render()}
+function render(){
+  const st=G.stores.find(s=>s.id===SID);
+  $('#htitle').textContent=st.icon+' '+st.name;if(!can(page,'v')){const v=PAGES.find(p=>can(p[0],'v'));if(v)page=v[0]}
+  $('#hwho').innerHTML=esc(USER.name)+'<br>'+ROLES[USER.role];
+  $('#nav').innerHTML=PAGES.filter(p=>can(p[0],'v')).map(p=>`<button class="${p[0]===page?'on':''}" onclick="go('${p[0]}')"><span>${p[2]}</span>${p[1]}</button>`).join('');
+  const fn=VIEW[page]||VIEW[page in DT?'doc':'dash'];
+  cur=fn(page);
+  $('#main').innerHTML=cur.h+'<div id="res">'+cur.b()+'</div>';
+  window.scrollTo(0,0);
+}
+function res(){$('#res').innerHTML=cur.b()}
+function sq(v){Q=v;res()}
+const match=(q,...f)=>!q||f.some(x=>String(x||'').toLowerCase().includes(q.toLowerCase()));
+function hd(title,sub,addFn,addLabel,extra){return`<div class="ph"><h2>${title}${sub?`<small>${sub}</small>`:''}</h2>${extra||''}<input type="search" placeholder="Rechercher…" value="${esc(Q)}" oninput="sq(this.value)">${addFn&&can(page,'a')?`<button class="btn gold" onclick="${addFn}">+ ${addLabel||'Ajouter'}</button>`:''}</div>`}
+function tbl(heads,rows,foot){if(!rows.length)return'<div class="box"><div class="empty">Aucune donnée pour le moment.</div></div>';return`<div class="box"><table><thead><tr>${heads.map(h=>`<th class="${h[0]==='>'?'r':''}">${h.replace(/^>/,'')}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody>${foot?`<tfoot>${foot}</tfoot>`:''}</table></div>`}
+
+/* ---------- modale ---------- */
+function openM(h,w){$('#mroot').innerHTML=`<div class="ov"><div class="md" ${w?`style="max-width:${w}px"`:''}>${h}</div></div>`}
+function closeM(){$('#mroot').innerHTML=''}
+function ask(title,label,def,cb,extra){window._ask=cb;openM(`<h3>${title}</h3><label>${label}<input id="askv" type="number" value="${def}"></label>${extra||''}<div class="mb"><button class="btn" onclick="closeM()">Annuler</button><button class="btn pri" onclick="_ask(+$('#askv').value)">Valider</button></div>`);setTimeout(()=>{const e=$('#askv');if(e){e.focus();e.select()}},50)}
+
+/* ---------- calculs ---------- */
+const sumL=l=>l.reduce((a,x)=>a+(+x.qty||0)*(+x.price||0),0);
+function solde(kind,id){
+  if(kind==='client'){const c=D.clients.find(x=>x.id===id);return D.docs.facture.filter(d=>d.tid===id).reduce((a,d)=>a+d.total-(d.paid||0),0)-((c&&c.credit)||0)}
+  const f=D.fournisseurs.find(x=>x.id===id);return D.reappro.filter(r=>r.fid===id).reduce((a,r)=>a+r.total-(r.paid||0),0)-((f&&f.credit)||0)}
+function settle(kind,id,amount,mode){
+  const list=(kind==='client'?D.docs.facture.filter(d=>d.tid===id):D.reappro.filter(r=>r.fid===id)).slice().sort((a,b)=>a.date.localeCompare(b.date));
+  let left=amount;
+  for(const d of list){const due=d.total-(d.paid||0);if(due>0&&left>0){const p=Math.min(due,left);d.paid=(d.paid||0)+p;left-=p}}
+  if(left>0){const e=(kind==='client'?D.clients:D.fournisseurs).find(x=>x.id===id);e.credit=(e.credit||0)+left}
+  D.paiements.push({id:uid(),date:today(),kind,tid:id,amount,mode});save();
+}
+function stat(d){return d.paid>=d.total&&d.total>0?['Payé','t-ok']:d.paid>0?['Partiel','t-w']:['Impayé','t-b']}
+function stockState(p){return p.stock<=0?['Rupture','t-b']:p.stock<=(+p.seuil||0)?['Faible','t-w']:['OK','t-ok']}
+function caisse(){
+  return D.docs.facture.reduce((a,d)=>a+(d.paid||0),0)+D.clients.reduce((a,c)=>a+(c.credit||0),0)
+   +D.argent.reduce((a,x)=>a+(x.sens==='Entrée'?x.amount:-x.amount),0)
+   -D.charges.reduce((a,c)=>a+c.amount,0)-D.reappro.reduce((a,r)=>a+(r.paid||0),0)-D.fournisseurs.reduce((a,f)=>a+(f.credit||0),0)}
+
+/* ---------- CRUD générique ---------- */
+const SCH={
+ clients:{s:'Client',req:['name'],f:[['name','Nom / Raison sociale'],['tel','Téléphone'],['addr','Adresse'],['note','Note','text']]},
+ fournisseurs:{s:'Fournisseur',req:['name'],f:[['name','Nom / Raison sociale'],['tel','Téléphone'],['addr','Adresse'],['note','Note','text']]},
+ depots:{s:'Dépôt',req:['name'],f:[['name','Nom du dépôt'],['addr','Adresse'],['resp','Responsable']]},
+ charges:{s:'Charge',req:['label','amount'],f:[['date','Date','date'],['cat','Catégorie','select',['Loyer','Électricité / Eau','Transport','Salaires','Téléphone / Internet','Entretien','Impôts / Taxes','Autres']],['label','Libellé'],['amount','Montant (FCFA)','number'],['mode','Mode de paiement','select',MODES]]},
+ argent:{s:'Dépôt d\'argent',req:['amount'],f:[['date','Date','date'],['sens','Sens','select',['Entrée','Sortie']],['who','Déposant / Compte'],['mode','Mode','select',MODES],['amount','Montant (FCFA)','number'],['note','Note / Motif']]},
+ produits:{s:'Produit',req:['name'],f:[['ref','Référence'],['name','Désignation'],['cat','Catégorie'],['depot','Dépôt','select',()=>D.depots.map(d=>d.name)],['unit','Unité (pièce, sac, m…)'],['pa','Prix d\'achat','number'],['pv','Prix de vente','number'],['stock','Stock actuel','number'],['seuil','Seuil d\'alerte','number']]}
+};
+function openForm(c,id){if(!can(c,id?'m':'a'))return toast('Droit insuffisant');
+  const sc=SCH[c],o=id?D[c].find(x=>x.id===id):{};
+  let h=`<h3>${id?'Modifier':'Ajouter'} — ${sc.s}</h3><div class="grid2">`;
+  sc.f.forEach(([k,l,t,opts])=>{
+    const v=o[k]!==undefined?o[k]:(t==='date'?today():(t==='number'?0:''));
+    const inp=t==='select'?`<select id="f_${k}">${(typeof opts==='function'?opts():opts).map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('')}</select>`:`<input id="f_${k}" type="${t==='text'||!t?'text':t}" value="${esc(v)}">`;
+    h+=`<label class="${k==='note'?'full':''}">${l}${inp}</label>`});
+  h+=`</div><div class="mb"><button class="btn" onclick="closeM()">Annuler</button><button class="btn pri" onclick="saveForm('${c}','${id||''}')">Enregistrer</button></div>`;openM(h);
+}
+function saveForm(c,id){if(!can(c,id?'m':'a'))return toast('Droit insuffisant');
+  const sc=SCH[c],o={};
+  for(const f of sc.f){let v=$('#f_'+f[0]).value.trim();if(f[2]==='number')v=+v||0;o[f[0]]=v}
+  for(const k of sc.req)if(!o[k])return toast('Champ obligatoire manquant');
+  if(id)Object.assign(D[c].find(x=>x.id===id),o);else D[c].push(Object.assign({id:uid()},o));
+  save();closeM();render();toast('Enregistré');
+}
+function delItem(c,id){if(!can(c,'s'))return toast('Droit insuffisant');
+  if(c==='depots'){const d=D.depots.find(x=>x.id===id);if(D.produits.some(p=>p.depot===d.name))return toast('Ce dépôt contient des produits');if(D.depots.length===1)return toast('Gardez au moins un dépôt')}
+  if(!confirm('Supprimer définitivement cet élément ?'))return;
+  D[c]=D[c].filter(x=>x.id!==id);save();render();toast('Supprimé');
+}
+const ab=(c,id,extra)=>`<div class="act">${extra||''}${can(c,'m')?`<button class="btn sm" onclick="openForm('${c}','${id}')">✏️ Modifier</button>`:''}${can(c,'s')?`<button class="btn sm dg" onclick="delItem('${c}','${id}')">🗑</button>`:''}</div>`;
+
+/* ---------- vues ---------- */
+const VIEW={};
+VIEW.dash=()=>{
+  const t=today(),m=t.slice(0,7);
+  const ft=D.docs.facture;
+  const vj=ft.filter(d=>d.date===t).reduce((a,d)=>a+d.total,0),vm=ft.filter(d=>d.date.slice(0,7)===m).reduce((a,d)=>a+d.total,0);
+  const imp=D.clients.reduce((a,c)=>a+Math.max(0,solde('client',c.id)),0)+ft.filter(d=>!d.tid).reduce((a,d)=>a+d.total-(d.paid||0),0);
+  const det=D.fournisseurs.reduce((a,f)=>a+Math.max(0,solde('fournisseur',f.id)),0);
+  const ch=D.charges.filter(c=>c.date.slice(0,7)===m).reduce((a,c)=>a+c.amount,0);
+  const vs=D.produits.reduce((a,p)=>a+p.stock*p.pa,0);
+  const al=D.produits.filter(p=>p.stock<=(+p.seuil||0));
+  const last=ft.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.num.localeCompare(a.num)).slice(0,6);
+  return{h:`<div class="ph"><h2>Tableau de bord<small>${esc(D.company.name)} — ${fd(t)}</small></h2></div>`,b:()=>`
+  <div class="cards">
+   <div class="card"><small>Ventes du jour</small><b>${fmt(vj)}</b></div>
+   <div class="card"><small>Ventes du mois</small><b>${fmt(vm)}</b></div>
+   <div class="card"><small>Solde de caisse</small><b>${fmt(caisse())}</b></div>
+   <div class="card al"><small>Impayés clients</small><b>${fmt(imp)}</b></div>
+   <div class="card al"><small>Dettes fournisseurs</small><b>${fmt(det)}</b></div>
+   <div class="card"><small>Charges du mois</small><b>${fmt(ch)}</b></div>
+   <div class="card"><small>Valeur du stock (achat)</small><b>${fmt(vs)}</b></div>
+   <div class="card ${al.length?'al':''}"><small>Produits en alerte</small><b>${al.length}</b></div>
+   <div class="card"><small>Total facturé (cumul)</small><b>${fmt(ft.reduce((a,d)=>a+d.total,0))}</b></div>
+   <div class="card"><small>Total encaissé (factures)</small><b>${fmt(ft.reduce((a,d)=>a+(d.paid||0),0))}</b></div>
+   <div class="card"><small>Total achats fournisseurs</small><b>${fmt(D.reappro.reduce((a,r)=>a+r.total,0))}</b></div>
+   <div class="card"><small>Total charges (cumul)</small><b>${fmt(D.charges.reduce((a,c)=>a+c.amount,0))}</b></div>
+   <div class="card"><small>Clients / Fournisseurs</small><b>${D.clients.length} / ${D.fournisseurs.length}</b></div>
+  </div>
+  <div class="box"><h3>Dernières factures</h3>${last.length?`<table><tbody>${last.map(d=>`<tr><td>${d.num}</td><td>${fd(d.date)}</td><td>${esc(d.tname)}</td><td class="r">${fmt(d.total)}</td><td><span class="tag ${stat(d)[1]}">${stat(d)[0]}</span></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3">Total (${last.length})</td><td class="r">${fmt(last.reduce((a,d)=>a+d.total,0))}</td><td>Reste : ${fmt(last.reduce((a,d)=>a+d.total-(d.paid||0),0))}</td></tr></tfoot></table>`:'<div class="empty">Aucune facture.</div>'}</div>
+  <div class="box"><h3>Produits à réapprovisionner</h3>${al.length?`<table><tbody>${al.slice(0,8).map(p=>`<tr><td>${esc(p.name)}</td><td>${esc(p.depot)}</td><td class="r">Stock : ${p.stock}</td><td><span class="tag ${stockState(p)[1]}">${stockState(p)[0]}</span></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="4">Total produits en alerte : ${al.length}</td></tr></tfoot></table>`:'<div class="empty">Tous les stocks sont corrects.</div>'}</div>`}};
+
+function partyTot(kind,id){const L=kind==='client'?D.docs.facture.filter(d=>d.tid===id):D.reappro.filter(r=>r.fid===id);return{t:L.reduce((a,d)=>a+d.total,0),p:L.reduce((a,d)=>a+(d.paid||0),0)}}
+function partyView(kind){
+  const c=kind==='client'?'clients':'fournisseurs',T=kind==='client'?'Clients':'Fournisseurs',cl=kind==='client';
+  return()=>({h:hd(T,'',`openForm('${c}')`,cl?'Nouveau client':'Nouveau fournisseur'),b:()=>{
+    const L=D[c].filter(x=>match(Q,x.name,x.tel,x.addr)).sort((a,b)=>a.name.localeCompare(b.name));
+    const R=L.map(x=>Object.assign({x,s:solde(kind,x.id)},partyTot(kind,x.id)));
+    const sT=R.reduce((a,r)=>a+r.t,0),sP=R.reduce((a,r)=>a+r.p,0),sS=R.reduce((a,r)=>a+r.s,0);
+    return`<div class="cards"><div class="card"><small>Nombre de ${cl?'clients':'fournisseurs'}</small><b>${L.length}</b></div><div class="card"><small>${cl?'Total facturé':'Total achats'}</small><b>${fmt(sT)}</b></div><div class="card"><small>${cl?'Total encaissé':'Total payé'}</small><b>${fmt(sP)}</b></div><div class="card ${sS>0?'al':''}"><small>${cl?'Total solde dû':'Total à payer'}</small><b>${fmt(sS)}</b></div></div>`+
+    tbl(['Nom','Téléphone','Adresse',cl?'>Total facturé':'>Total achats',cl?'>Encaissé':'>Payé',cl?'>Solde dû':'>Solde à payer','Actions'],R.map(r=>{const x=r.x;return`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.tel)}</td><td>${esc(x.addr)}</td><td class="r">${fmt(r.t)}</td><td class="r">${fmt(r.p)}</td><td class="r" style="color:${r.s>0?'var(--rd)':'inherit'}">${fmt(r.s)}</td><td>${ab(c,x.id,`<button class="btn sm" onclick="hist('${kind}','${x.id}')">📜 Historique</button>${can(c,'o')?`<button class="btn sm" onclick="pay('${kind}','${x.id}')">💵 Règlement</button>`:''}`)}</td></tr>`}),`<tr><td colspan="3">Total (${L.length})</td><td class="r">${fmt(sT)}</td><td class="r">${fmt(sP)}</td><td class="r">${fmt(sS)}</td><td></td></tr>`)}})}
+VIEW.clients=partyView('client');VIEW.fournisseurs=partyView('fournisseur');
+function pay(kind,id){if(!can(kind==='client'?'clients':'fournisseurs','o'))return toast('Droit insuffisant');
+  const s=solde(kind,id);
+  ask(kind==='client'?'Règlement client':'Règlement fournisseur','Montant (FCFA) — solde actuel : '+fmt(s),Math.max(0,s),v=>{if(v<=0)return toast('Montant invalide');settle(kind,id,v,$('#paymode').value);closeM();render();toast('Règlement enregistré')},`<label style="margin-top:10px">Mode de paiement<select id="paymode">${MODES.map(m=>`<option>${m}</option>`).join('')}</select></label>`)}
+const HT={facture:['Facture','t-ok'],proforma:['Proforma','t-n'],devis:['Devis','t-n'],bl:['Bon de livraison','t-n'],bc:['Bon de commande','t-w'],appro:['Approvisionnement','t-ok'],reg:['Règlement','t-w']};
+let HF='';
+function histRows(kind,id){
+  const rows=[],c=kind==='client';
+  (c?['facture','proforma','devis','bl']:['bc']).forEach(t=>D.docs[t].filter(d=>d.tid===id).forEach(d=>{const f=t==='facture';
+    rows.push({d:d.date,t,l:d.num,i:(d.lines||[]).length+' ligne(s)'+(d.conv?' · facturé '+d.conv:'')+(d.recu?' · reçu':''),a:d.total,p:f?(d.paid||0):0,acc:f,st:f?stat(d):null})}));
+  if(!c)D.reappro.filter(r=>r.fid===id).forEach(r=>rows.push({d:r.date,t:'appro',l:r.num,i:(r.lines||[]).length+' ligne(s)'+(r.src?' · BC '+r.src:''),a:r.total,p:r.paid||0,acc:true,st:stat(r)}));
+  D.paiements.filter(x=>x.kind===kind&&x.tid===id).forEach(x=>rows.push({d:x.date,t:'reg',l:x.ref||'',i:x.mode+(x.ref?' · sur facture':''),a:0,p:x.amount,r:1}));
+  return rows.sort((a,b)=>b.d.localeCompare(a.d)||String(b.l).localeCompare(String(a.l)))}
+const hTr=r=>`<tr><td>${fd(r.d)}</td><td><span class="tag ${HT[r.t][1]}">${HT[r.t][0]}</span></td><td><b>${esc(r.l)}</b></td><td>${esc(r.i)}</td><td class="r">${r.r?'':fmt(r.a)}</td><td class="r">${r.r?'<i>'+fmt(r.p)+'</i>':(r.acc?fmt(r.p):'—')}</td><td>${r.st?`<span class="tag ${r.st[1]}">${r.st[0]}</span>`:''}</td></tr>`;
+const hSum=(rows,k)=>rows.filter(r=>r.acc).reduce((a,r)=>a+r[k],0);
+function hist(kind,id,fl){
+  HF=fl||'';
+  const e=(kind==='client'?D.clients:D.fournisseurs).find(x=>x.id===id),c=kind==='client',all=histRows(kind,id),rows=all.filter(r=>!HF||r.t===HF);
+  const T=hSum(all,'a'),P=hSum(all,'p'),cr=e.credit||0,S=solde(kind,id),nn=all.filter(r=>!r.acc&&!r.r),NT=nn.reduce((a,r)=>a+r.a,0);
+  const sT=hSum(rows,'a'),sP=hSum(rows,'p'),types=[...new Set(all.map(r=>r.t))];
+  openM(`<h3>Historique — ${esc(e.name)}</h3>
+  <div class="cards"><div class="card"><small>Opérations</small><b>${all.length}</b></div><div class="card"><small>${c?'Total facturé':'Total achats'}</small><b>${fmt(T)}</b></div><div class="card"><small>${c?'Total encaissé':'Total payé'}</small><b>${fmt(P)}</b></div>${cr?`<div class="card"><small>Avance / crédit</small><b>${fmt(cr)}</b></div>`:''}${NT?`<div class="card"><small>Documents non facturés (${nn.length})</small><b>${fmt(NT)}</b></div>`:''}<div class="card ${S>0?'al':''}"><small>${c?'Solde dû':'Solde à payer'}</small><b>${fmt(S)}</b></div></div>
+  <div class="ph"><select onchange="hist('${kind}','${id}',this.value)" style="padding:8px;border:1.5px solid #0b4a2b;border-radius:8px;font-weight:700"><option value="">Toutes les opérations (${all.length})</option>${types.map(t=>`<option value="${t}" ${HF===t?'selected':''}>${HT[t][0]} (${all.filter(r=>r.t===t).length})</option>`).join('')}</select><span style="flex:1"></span><button class="btn" onclick="histPrint('${kind}','${id}')">🖨 Imprimer</button></div>
+  ${tbl(['Date','Type','N°','Détail','>Montant','>'+(c?'Encaissé':'Payé'),'Statut'],rows.map(hTr),`<tr><td colspan="4">Total comptabilisé (${c?'factures':'approvisionnements'})</td><td class="r">${fmt(sT)}</td><td class="r">${fmt(sP)}</td><td></td></tr><tr><td colspan="4">Reste ${c?'à encaisser':'à payer'} sur ces opérations</td><td class="r" colspan="2">${fmt(sT-sP)}</td><td></td></tr>`)}
+  <p style="font-size:12px;color:var(--mu)">Les règlements (en italique) sont déjà imputés sur les ${c?'factures':'approvisionnements'} : ils ne sont pas comptés deux fois. Devis, proforma, bons de livraison et de commande ne modifient pas le solde.</p>
+  <p class="tot">Solde : <b>${fmt(S)}</b></p><div class="mb"><button class="btn pri" onclick="closeM()">Fermer</button></div>`,980)}
+function histPrint(kind,id){
+  const e=(kind==='client'?D.clients:D.fournisseurs).find(x=>x.id===id),c=kind==='client',all=histRows(kind,id),rows=all.filter(r=>!HF||r.t===HF),cp=D.company;
+  $('#pa').innerHTML=`<div class="doc"><div class="dh"><div class="dl">${cp.logo?`<img class="lg" src="${cp.logo}">`:''}<div><div class="cn">${esc(cp.name)}</div></div></div><div class="dr"><div class="dt">HISTORIQUE ${c?'CLIENT':'FOURNISSEUR'}</div><div><b>${esc(e.name)}</b></div><div>Édité le ${fd(today())}</div></div></div>
+  <table><thead><tr><th>Date</th><th>Type</th><th>N°</th><th>Détail</th><th>Montant</th><th>${c?'Encaissé':'Payé'}</th><th>Statut</th></tr></thead><tbody>${rows.map(hTr).join('')}</tbody></table>
+  <div class="dtot"><div><span>${c?'Total facturé':'Total achats'}</span><b>${fmt(hSum(all,'a'))}</b></div><div><span>${c?'Total encaissé':'Total payé'}</span><b>${fmt(hSum(all,'p'))}</b></div><div class="g"><span>SOLDE</span><b>${fmt(solde(kind,id))}</b></div></div></div>`;
+  $('#pgs').textContent='@page{size:A4;margin:8mm}';
+  setTimeout(()=>{try{window.print()}catch(x){toast('Impression indisponible ici')}},120)}
+
+VIEW.produits=()=>({h:hd('Produits et stocks','',"openForm('produits')",'Nouveau produit',`<label style="display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" id="onlyal" onchange="res()" style="width:auto;margin:0"> Alertes seulement</label>`),b:()=>{
+  const al=$('#onlyal')&&$('#onlyal').checked;
+  const L=D.produits.filter(p=>match(Q,p.name,p.ref,p.cat,p.depot)&&(!al||p.stock<=(+p.seuil||0))).sort((a,b)=>a.name.localeCompare(b.name));
+  const vA=D.produits.reduce((a,p)=>a+p.stock*p.pa,0),vV=D.produits.reduce((a,p)=>a+p.stock*p.pv,0);
+  return`<div class="cards"><div class="card"><small>Références</small><b>${D.produits.length}</b></div><div class="card"><small>Valeur stock (achat)</small><b>${fmt(vA)}</b></div><div class="card"><small>Valeur stock (vente)</small><b>${fmt(vV)}</b></div><div class="card al"><small>En alerte</small><b>${D.produits.filter(p=>p.stock<=(+p.seuil||0)).length}</b></div></div>`+
+  tbl(['Réf.','Désignation','Catégorie','Dépôt','>Stock','>Prix achat','>Prix vente','>Valeur achat','>Valeur vente','État','Actions'],L.map(p=>{const s=stockState(p);return`<tr><td>${esc(p.ref)}</td><td><b>${esc(p.name)}</b></td><td>${esc(p.cat)}</td><td>${esc(p.depot)}</td><td class="r">${p.stock} ${esc(p.unit)}</td><td class="r">${num(p.pa)}</td><td class="r">${num(p.pv)}</td><td class="r">${num(p.stock*p.pa)}</td><td class="r">${num(p.stock*p.pv)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${ab('produits',p.id,`${can('produits','o')?`<button class="btn sm" onclick="adjust('${p.id}')">⚖️ Inventaire</button>`:''}`)}</td></tr>`}),`<tr><td colspan="4">Total (${L.length} produits)</td><td class="r">${L.reduce((a,p)=>a+p.stock,0)}</td><td></td><td></td><td class="r">${num(L.reduce((a,p)=>a+p.stock*p.pa,0))}</td><td class="r">${num(L.reduce((a,p)=>a+p.stock*p.pv,0))}</td><td colspan="2"></td></tr>`)}});
+function adjust(id){if(!can('produits','o'))return toast('Droit insuffisant');const p=D.produits.find(x=>x.id===id);ask('Inventaire — '+esc(p.name),'Quantité réelle en stock',p.stock,v=>{p.stock=v;save();closeM();render();toast('Stock ajusté')})}
+
+/* vente rapide */
+let CART=[],POS={tid:'',remise:0,paid:null,mode:'Espèces',sid:null};
+const posTot=()=>{const s=sumL(CART);return{s,t:Math.max(0,s-(+POS.remise||0))}};
+function padd(id){const p=D.produits.find(x=>x.id===id);if(!p)return;const l=CART.find(x=>x.pid===id);if(l)l.qty++;else CART.push({pid:id,ref:p.ref,name:p.name,qty:1,price:+p.pv||0});drawCart()}
+function pset(i,k,v){CART[i][k]=Math.max(0,+v||0);drawCart()}
+function pdel(i){CART.splice(i,1);drawCart()}
+function pclear(){CART=[];POS.remise=0;POS.paid=null;POS.tid='';drawCart()}
+function drawCart(){const e=$('#poscart');if(e)e.innerHTML=cartHtml()}
+function ptHtml(){const t=posTot().t,r=POS.paid==null?t:+POS.paid;return`Total : <b>${fmt(t)}</b><br>${r>=t?`Monnaie à rendre : <b>${fmt(r-t)}</b>`:`Reste à payer : <b style="color:var(--rd)">${fmt(t-r)}</b>`}`}
+function drawPT(){const e=$('#postot');if(e)e.innerHTML=ptHtml()}
+function cartHtml(){
+  return`<h3>🛒 Panier (${CART.reduce((a,l)=>a+l.qty,0)} article(s))</h3><div style="padding:10px">
+  <label>Client<select onchange="POS.tid=this.value"><option value="">— Client comptoir —</option>${D.clients.map(c=>`<option value="${c.id}" ${c.id===POS.tid?'selected':''}>${esc(c.name)}</option>`).join('')}</select></label>
+  ${CART.length?`<table class="lt" style="margin-top:8px"><thead><tr><th>Produit</th><th class="r">Qté</th><th class="r">Prix</th><th class="r">Total</th><th></th></tr></thead><tbody>${CART.map((l,i)=>`<tr><td>${esc(l.name)}</td><td class="r"><input type="number" min="0" value="${l.qty}" style="width:60px" onchange="pset(${i},'qty',this.value)"></td><td class="r"><input type="number" value="${l.price}" onchange="pset(${i},'price',this.value)"></td><td class="r">${num(l.qty*l.price)}</td><td><button class="btn sm dg" onclick="pdel(${i})">✕</button></td></tr>`).join('')}</tbody><tfoot><tr><td>Total brut</td><td class="r">${CART.reduce((a,l)=>a+l.qty,0)}</td><td></td><td class="r">${num(posTot().s)}</td><td></td></tr></tfoot></table>`:'<div class="empty">Touchez un produit pour l\'ajouter.</div>'}
+  <div class="grid2" style="margin-top:8px"><label>Remise (FCFA)<input type="number" value="${POS.remise||0}" oninput="POS.remise=+this.value||0;drawPT()"></label><label>Mode de paiement<select onchange="POS.mode=this.value">${MODES.map(m=>`<option ${m===POS.mode?'selected':''}>${m}</option>`).join('')}</select></label>
+  <label class="full">Montant reçu (FCFA) — vide = payé comptant<input type="number" value="${POS.paid==null?'':POS.paid}" placeholder="Montant exact" oninput="POS.paid=this.value===''?null:+this.value;drawPT()"></label></div>
+  <div class="tot" id="postot">${ptHtml()}</div>
+  <div class="mb"><button class="btn dg" onclick="pclear()">Vider</button><button class="btn pri" onclick="psale()">✅ Valider</button><button class="btn gold" onclick="psale('ticket')">🎫 Valider + Ticket</button><button class="btn gold" onclick="psale('a4')">🧾 Valider + Facture</button></div></div>`}
+function psale(act){
+  if(!can('vente','a'))return toast('Droit insuffisant');
+  const lines=CART.filter(l=>l.qty>0).map(l=>({pid:l.pid,ref:l.ref,name:l.name,qty:l.qty,price:l.price}));
+  if(!lines.length)return toast('Le panier est vide');
+  const s=sumL(lines),rem=Math.min(s,+POS.remise||0),t=s-rem,given=POS.paid==null?t:+POS.paid,paid=Math.min(t,given);
+  if(!POS.tid&&paid<t)return toast('Client comptoir : paiement complet obligatoire (ou choisissez un client)');
+  if(!stockCheck(lines,null))return;
+  const w=D.clients.find(x=>x.id===POS.tid),d={id:uid(),num:nextNum('facture',DT.facture.p),date:today(),tid:POS.tid,lines,remise:rem,total:t,paid,given,mode:POS.mode,due:today(),note:'Vente rapide',by:USER.name,tname:w?w.name:'Client comptoir'};
+  stockMove(lines,-1);D.docs.facture.push(d);save();
+  CART=[];POS.remise=0;POS.paid=null;POS.tid='';render();pdone(d);
+  if(act)doPrint('facture',d.id,act)}
+function pdone(d){openM(`<h3>✅ Vente enregistrée</h3><p style="font-size:16px">Facture <b>${d.num}</b> — ${esc(d.tname)}<br>Total : <b>${fmt(d.total)}</b> · Encaissé : <b>${fmt(d.paid)}</b>${d.given>d.total?`<br>Monnaie rendue : <b>${fmt(d.given-d.total)}</b>`:''}${d.paid<d.total?`<br>Reste dû : <b style="color:var(--rd)">${fmt(d.total-d.paid)}</b>`:''}</p>
+  <div class="act"><button class="btn gold" onclick="doPrint('facture','${d.id}','ticket')">🎫 Ticket</button><button class="btn pri" onclick="doPrint('facture','${d.id}','a4')">🧾 Facture A4</button><button class="btn" onclick="doPrint('facture','${d.id}','pdf')">⬇ PDF</button><button class="btn" onclick="wa('facture','${d.id}')">📲 WhatsApp</button></div>
+  <div class="mb"><button class="btn pri" onclick="closeM()">Nouvelle vente</button></div>`,520)}
+VIEW.vente=()=>{
+  if(POS.sid!==SID){CART=[];POS={tid:'',remise:0,paid:null,mode:'Espèces',sid:SID}}
+  return{h:hd('Vente rapide','Comptoir : ticket et facture',null),b:()=>{
+    const L=D.produits.filter(p=>match(Q,p.name,p.ref,p.cat)).sort((a,b)=>a.name.localeCompare(b.name)).slice(0,80);
+    const T=D.docs.facture.filter(d=>d.date===today()).sort((a,b)=>b.num.localeCompare(a.num)),tt=T.reduce((a,d)=>a+d.total,0),tp=T.reduce((a,d)=>a+(d.paid||0),0);
+    return`<div class="cards"><div class="card"><small>Ventes du jour</small><b>${T.length}</b></div><div class="card"><small>Total du jour</small><b>${fmt(tt)}</b></div><div class="card"><small>Encaissé du jour</small><b>${fmt(tp)}</b></div><div class="card al"><small>Reste du jour</small><b>${fmt(tt-tp)}</b></div></div>
+    <div class="pos"><div class="box"><h3>Produits (${L.length}${D.produits.length>L.length?' affichés':''})</h3>${L.length?`<div class="pgrid">${L.map(p=>`<button class="pt ${p.stock<=0?'out':''}" onclick="padd('${p.id}')"><b>${esc(p.name)}</b><span>${esc(p.ref||'')} · Stock ${p.stock}</span><span class="pr">${fmt(p.pv)}</span></button>`).join('')}</div>`:'<div class="empty">Aucun produit. Utilisez la recherche ou ajoutez des produits.</div>'}</div>
+    <div class="box pcart" id="poscart">${cartHtml()}</div></div>
+    <h3 style="margin:6px 0;color:var(--g)">Ventes du jour</h3>`+
+    tbl(['N°','Client','>Montant','>Encaissé','>Reste','Actions'],T.map(d=>`<tr><td><b>${d.num}</b></td><td>${esc(d.tname||'—')}</td><td class="r">${fmt(d.total)}</td><td class="r">${fmt(d.paid||0)}</td><td class="r">${fmt(d.total-(d.paid||0))}</td><td><div class="act"><button class="btn sm" onclick="doPrint('facture','${d.id}','ticket')">🎫 Ticket</button><button class="btn sm" onclick="doPrint('facture','${d.id}','a4')">🧾 Facture</button><button class="btn sm" onclick="preview('facture','${d.id}')">👁</button></div></td></tr>`),`<tr><td colspan="2">Total (${T.length})</td><td class="r">${fmt(tt)}</td><td class="r">${fmt(tp)}</td><td class="r">${fmt(tt-tp)}</td><td></td></tr>`)}}};
+
+/* réapprovisionnement */
+let RL=[];
+VIEW.reappro=()=>{RL=[];return{h:`<div class="ph"><h2>Ré-approvisionner<small>Entrée de marchandises en stock</small></h2></div>`,b:()=>{
+  const al=D.produits.filter(p=>p.stock<=(+p.seuil||0));
+  const RA=D.reappro,rT=RA.reduce((a,r)=>a+r.total,0),rP=RA.reduce((a,r)=>a+r.paid,0);
+  return`<div class="cards"><div class="card"><small>Approvisionnements</small><b>${RA.length}</b></div><div class="card"><small>Total achats</small><b>${fmt(rT)}</b></div><div class="card"><small>Total payé</small><b>${fmt(rP)}</b></div><div class="card al"><small>Reste à payer</small><b>${fmt(rT-rP)}</b></div></div><div ${can('reappro','a')?'':'class="hide"'}><div class="box"><h3>Nouvel approvisionnement</h3><div style="padding:12px"><div class="grid2">
+   <label>Date<input type="date" id="rdate" value="${today()}"></label>
+   <label>Fournisseur<select id="rf"><option value="">— Aucun —</option>${D.fournisseurs.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join('')}</select></label></div>
+   <div class="addl"><label>Produit<input id="rp" list="plist" placeholder="Nom ou référence" onchange="rpick()"></label><label>Quantité<input id="rq" type="number" value="1" min="1"></label><label>Prix d'achat<input id="rpa" type="number" value="0"></label><button class="btn pri" onclick="radd()">Ajouter</button></div>
+   <datalist id="plist">${D.produits.map(p=>`<option value="${esc(p.name)}">${esc(p.ref)}</option>`).join('')}</datalist>
+   <div id="rlines"></div>
+   <div class="grid2" style="margin-top:10px"><label>Montant payé au fournisseur (FCFA)<input id="rpaid" type="number" value="0"></label><label>Mode<select id="rmode">${MODES.map(m=>`<option>${m}</option>`).join('')}</select></label></div>
+   <div class="mb"><button class="btn gold" onclick="rsave()">Valider l'approvisionnement</button></div></div></div></div>
+  ${al.length?`<div class="box"><h3>Produits à réapprovisionner (${al.length})</h3><table><tbody>${al.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>Stock : ${p.stock}</td><td>Seuil : ${p.seuil||0}</td><td>${can('reappro','a')?`<button class="btn sm" onclick="rquick('${p.id}')">+ Ajouter</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:''}
+  <div class="box"><h3>Historique des approvisionnements</h3>${D.reappro.length?`<table><thead><tr><th>N°</th><th>Date</th><th>Fournisseur</th><th class="r">Total</th><th class="r">Payé</th><th class="r">Reste</th><th></th></tr></thead><tbody>${D.reappro.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`<tr><td>${r.num}</td><td>${fd(r.date)}</td><td>${esc((D.fournisseurs.find(f=>f.id===r.fid)||{}).name||'—')}</td><td class="r">${fmt(r.total)}</td><td class="r">${fmt(r.paid)}</td><td class="r">${fmt(r.total-r.paid)}</td><td>${can('reappro','s')?`<button class="btn sm dg" onclick="rdel('${r.id}')">🗑</button>`:''}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3">Total (${RA.length})</td><td class="r">${fmt(rT)}</td><td class="r">${fmt(rP)}</td><td class="r">${fmt(rT-rP)}</td><td></td></tr></tfoot></table>`:'<div class="empty">Aucun approvisionnement.</div>'}</div>`}}};
+setTimeout(()=>{},0);
+function rdraw(){const e=$('#rlines');if(!e)return;e.innerHTML=RL.length?`<table class="lt"><thead><tr><th>Produit</th><th class="r">Qté</th><th class="r">Prix achat</th><th class="r">Total</th><th></th></tr></thead><tbody>${RL.map((l,i)=>`<tr><td>${esc(l.name)}</td><td class="r">${l.qty}</td><td class="r">${num(l.price)}</td><td class="r">${num(l.qty*l.price)}</td><td><button class="btn sm dg" onclick="RL.splice(${i},1);rdraw()">✕</button></td></tr>`).join('')}</tbody></table><p class="tot">Total : <b>${fmt(sumL(RL))}</b></p>`:''}
+function rpick(){const p=D.produits.find(x=>x.name===$('#rp').value||x.ref===$('#rp').value);if(p){$('#rpa').value=p.pa;$('#rq').focus()}}
+function radd(){const p=D.produits.find(x=>x.name===$('#rp').value||x.ref===$('#rp').value);if(!p)return toast('Choisissez un produit existant');const q=+$('#rq').value;if(q<=0)return toast('Quantité invalide');RL.push({pid:p.id,name:p.name,qty:q,price:+$('#rpa').value||0});$('#rp').value='';$('#rq').value=1;rdraw()}
+function rquick(id){const p=D.produits.find(x=>x.id===id);RL.push({pid:p.id,name:p.name,qty:Math.max(1,(+p.seuil||0)*2-p.stock),price:p.pa});rdraw();toast('Ajouté à la liste')}
+function nextNum(key,prefix){const y=new Date().getFullYear(),k=key+y;D.counters[k]=(D.counters[k]||0)+1;return prefix+'-'+y+'-'+String(D.counters[k]).padStart(4,'0')}
+function applyReappro(lines,sign){lines.forEach(l=>{const p=D.produits.find(x=>x.id===l.pid);if(p){p.stock+=sign*l.qty;if(sign>0&&l.price)p.pa=l.price}})}
+function rsave(){if(!can('reappro','a'))return toast('Droit insuffisant');
+  if(!RL.length)return toast('Ajoutez au moins un produit');
+  const total=sumL(RL),paid=Math.min(total,+$('#rpaid').value||0);
+  const r={id:uid(),num:nextNum('REC','APP'),date:$('#rdate').value,fid:$('#rf').value,lines:RL,total,paid};
+  applyReappro(r.lines,1);D.reappro.push(r);save();toast('Stock mis à jour');render();
+}
+function rdel(id){if(!can('reappro','s'))return toast('Droit insuffisant');const r=D.reappro.find(x=>x.id===id);if(!confirm('Supprimer cet approvisionnement et retirer les quantités du stock ?'))return;applyReappro(r.lines,-1);D.reappro=D.reappro.filter(x=>x.id!==id);save();render()}
+
+/* ---------- documents ---------- */
+const DT={facture:{t:'Factures',s:'FACTURE',p:'FAC',who:'client'},proforma:{t:'Factures proforma',s:'FACTURE PROFORMA',p:'PRO',who:'client'},bc:{t:'Bons de commande',s:'BON DE COMMANDE',p:'BC',who:'fournisseur'},bl:{t:'Bons de livraison',s:'BON DE LIVRAISON',p:'BL',who:'client'},devis:{t:'Devis',s:'DEVIS',p:'DEV',who:'client'}};
+function docCards(type,L){
+  const s=a=>a.reduce((x,d)=>x+d.total,0),m=today().slice(0,7);
+  let h=`<div class="cards"><div class="card"><small>Nombre de documents</small><b>${L.length}</b></div><div class="card"><small>Montant total</small><b>${fmt(s(L))}</b></div><div class="card"><small>Total du mois</small><b>${fmt(s(L.filter(d=>d.date.slice(0,7)===m)))}</b></div>`;
+  if(type==='facture'){const p=L.reduce((x,d)=>x+(d.paid||0),0);h+=`<div class="card"><small>Total encaissé</small><b>${fmt(p)}</b></div><div class="card al"><small>Reste à encaisser</small><b>${fmt(s(L)-p)}</b></div>`}
+  else if(type==='bc'){const o=L.filter(d=>!d.recu);h+=`<div class="card"><small>En attente (${o.length})</small><b>${fmt(s(o))}</b></div>`}
+  else if(type==='proforma'||type==='devis'){const o=L.filter(d=>!d.conv);h+=`<div class="card"><small>Ouverts (${o.length})</small><b>${fmt(s(o))}</b></div>`}
+  return h+'</div>'}
+VIEW.doc=type=>{
+  const T=DT[type];
+  return{h:hd(T.t,type==='facture'?'Total du jour : '+fmt(D.docs.facture.filter(d=>d.date===today()).reduce((a,d)=>a+d.total,0)):'',`openDoc('${type}')`),b:()=>{
+    const L=D.docs[type].filter(d=>match(Q,d.num,d.tname,fd(d.date))).sort((a,b)=>b.date.localeCompare(a.date)||b.num.localeCompare(a.num));
+    const f=type==='facture';
+    return docCards(type,L)+tbl(['N°','Date',T.who==='client'?'Client':'Fournisseur','>Montant',...(f?['>Encaissé','>Reste']:[]),f?'Statut':'État','Actions'],L.map(d=>{
+      let st='',x='';
+      if(f){const s=stat(d);st=`<span class="tag ${s[1]}">${s[0]}</span>`;x=`<button class="btn sm" onclick="doPrint('${type}','${d.id}','ticket')">🎫 Ticket</button>`+(d.paid<d.total&&can(type,'o')?`<button class="btn sm" onclick="encaisser('${d.id}')">💵 Encaisser</button>`:'')}
+      else if(type==='bc'){st=d.recu?'<span class="tag t-ok">Reçu</span>':'<span class="tag t-w">En attente</span>';if(!d.recu&&can(type,'o'))x=`<button class="btn sm" onclick="receive('${d.id}')">📦 Réceptionner</button>`}
+      else if(type==='proforma'||type==='devis'){st=d.conv?`<span class="tag t-ok">Facturé ${d.conv}</span>`:'<span class="tag t-n">Ouvert</span>';if(!d.conv&&can(type,'o'))x=`<button class="btn sm" onclick="convert('${type}','${d.id}')">➡ Facturer</button>`}
+      else st='<span class="tag t-n">Émis</span>';
+      return`<tr><td><b>${d.num}</b></td><td>${fd(d.date)}</td><td>${esc(d.tname||'—')}</td><td class="r">${fmt(d.total)}</td>${f?`<td class="r">${fmt(d.paid||0)}</td><td class="r" style="color:${d.total-(d.paid||0)>0?'var(--rd)':'inherit'}">${fmt(d.total-(d.paid||0))}</td>`:''}<td>${st}</td><td><div class="act"><button class="btn sm" onclick="preview('${type}','${d.id}')">👁 Aperçu</button><button class="btn sm" onclick="doPrint('${type}','${d.id}','a4')">🖨 Imprimer</button><button class="btn sm" onclick="doPrint('${type}','${d.id}','pdf')">⬇ PDF</button>${x}${can(type,'m')?`<button class="btn sm" onclick="openDoc('${type}','${d.id}')">✏️</button>`:''}${can(type,'s')?`<button class="btn sm dg" onclick="delDoc('${type}','${d.id}')">🗑</button>`:''}</div></td></tr>`}),
+      `<tr><td colspan="3">Total (${L.length})</td><td class="r">${fmt(L.reduce((a,d)=>a+d.total,0))}</td>${f?`<td class="r">${fmt(L.reduce((a,d)=>a+(d.paid||0),0))}</td><td class="r">${fmt(L.reduce((a,d)=>a+d.total-(d.paid||0),0))}</td>`:''}<td colspan="2"></td></tr>`)}}};
+let F=null;
+function whoList(type){return DT[type].who==='client'?D.clients:D.fournisseurs}
+function openDoc(type,id,pre){if(!can(type,id?'m':'a'))return toast('Droit insuffisant');
+  const T=DT[type];
+  const o=id?JSON.parse(JSON.stringify(D.docs[type].find(x=>x.id===id))):(pre||{date:today(),tid:'',lines:[],remise:0,paid:0,mode:'Espèces',note:''});
+  F={type,id,o};const f=type==='facture';
+  openM(`<h3>${id?'Modifier':'Nouveau'} — ${T.s}${id?' '+o.num:''}</h3>
+  <div class="grid2"><label>Date<input type="date" id="fdate" value="${o.date}"></label>
+  <label>${T.who==='client'?'Client':'Fournisseur'}<select id="fwho"><option value="">${T.who==='client'?'— Client comptoir —':'— Choisir —'}</option>${whoList(type).map(w=>`<option value="${w.id}" ${w.id===o.tid?'selected':''}>${esc(w.name)}</option>`).join('')}</select></label>${f?`<label>Échéance<input type="date" id="fdue" value="${o.due||o.date}"></label>`:''}</div>
+  <div class="addl"><label>Produit / service<input id="fprod" list="dlist" placeholder="Rechercher un produit…" onchange="fpick()"></label><label>Qté<input id="fqty" type="number" value="1" min="0"></label><label>Prix unitaire<input id="fprice" type="number" value="0"></label><button class="btn pri" onclick="fadd()">Ajouter</button></div>
+  <datalist id="dlist">${D.produits.map(p=>`<option value="${esc(p.name)}">${esc(p.ref)} — stock ${p.stock}</option>`).join('')}</datalist>
+  <div class="box" style="margin:0"><div id="fl"></div></div>
+  <div class="grid2" style="margin-top:10px"><label>Remise (FCFA)<input type="number" id="frem" value="${o.remise||0}" oninput="drawTot()"></label>
+  ${f?`<label>Montant encaissé (FCFA)<input type="number" id="fpaid" value="${o.paid||0}" oninput="drawTot()"></label><label>Mode de paiement<select id="fmode">${MODES.map(m=>`<option ${m===o.mode?'selected':''}>${m}</option>`).join('')}</select></label>`:''}
+  <label class="full">Note<input id="fnote" value="${esc(o.note||'')}"></label></div>
+  <div class="tot" id="ftot"></div>
+  <div class="mb"><button class="btn" onclick="closeM()">Annuler</button><button class="btn pri" onclick="saveDoc()">Enregistrer</button></div>`);
+  drawLines();
+}
+function fpick(){const p=D.produits.find(x=>x.name===$('#fprod').value||x.ref===$('#fprod').value);if(p){$('#fprice').value=F.type==='bc'?p.pa:p.pv;$('#fqty').focus()}}
+function fadd(){
+  const n=$('#fprod').value.trim(),q=+$('#fqty').value,pr=+$('#fprice').value||0;
+  if(!n||q<=0)return toast('Saisissez un produit et une quantité');
+  const p=D.produits.find(x=>x.name===n||x.ref===n);
+  F.o.lines.push({pid:p?p.id:'',ref:p?p.ref:'',name:p?p.name:n,qty:q,price:pr});
+  $('#fprod').value='';$('#fqty').value=1;$('#fprice').value=0;drawLines();$('#fprod').focus();
+}
+function drawLines(){
+  const L=F.o.lines;
+  $('#fl').innerHTML=L.length?`<table class="lt"><thead><tr><th>Désignation</th><th class="r">Qté</th><th class="r">Prix</th><th class="r">Total</th><th></th></tr></thead><tbody>${L.map((l,i)=>`<tr><td><input class="nm" value="${esc(l.name)}" onchange="F.o.lines[${i}].name=this.value"></td><td class="r"><input type="number" value="${l.qty}" onchange="updL(${i},'qty',this.value)"></td><td class="r"><input type="number" value="${l.price}" onchange="updL(${i},'price',this.value)"></td><td class="r" id="lt${i}">${num(l.qty*l.price)}</td><td><button class="btn sm dg" onclick="F.o.lines.splice(${i},1);drawLines()">✕</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Aucune ligne. Ajoutez des produits ci-dessus.</div>';
+  drawTot();
+}
+function updL(i,k,v){F.o.lines[i][k]=+v||0;const l=F.o.lines[i];$('#lt'+i).textContent=num(l.qty*l.price);drawTot()}
+function drawTot(){
+  const s=sumL(F.o.lines),r=+($('#frem')||{}).value||0,t=Math.max(0,s-r);let h=`Total : <b>${fmt(t)}</b>`;
+  if(F.type==='facture'){const p=+($('#fpaid')||{}).value||0;h+=`<br>Reste à payer : <b>${fmt(Math.max(0,t-p))}</b>`}
+  $('#ftot').innerHTML=h;
+}
+function stockCheck(lines,old){
+  const bad=[];lines.forEach(l=>{const p=D.produits.find(x=>x.id===l.pid);if(!p)return;const av=p.stock+(old||[]).filter(x=>x.pid===l.pid).reduce((a,x)=>a+x.qty,0);const need=lines.filter(x=>x.pid===l.pid).reduce((a,x)=>a+x.qty,0);if(need>av&&!bad.includes(p.name))bad.push(p.name+' (dispo : '+av+')')});
+  return!bad.length||confirm('Stock insuffisant pour :\n'+bad.join('\n')+'\n\nContinuer quand même ?')}
+function stockMove(lines,sign){lines.forEach(l=>{const p=D.produits.find(x=>x.id===l.pid);if(p)p.stock+=sign*l.qty})}
+function saveDoc(){
+  const{type,id,o}=F;if(!can(type,id?'m':'a'))return toast('Droit insuffisant');if(!o.lines.length)return toast('Ajoutez au moins une ligne');
+  const old=id?D.docs[type].find(x=>x.id===id):null;
+  if(type==='facture'&&!stockCheck(o.lines,old&&old.lines))return;
+  o.date=$('#fdate').value||today();o.tid=$('#fwho').value;o.remise=+$('#frem').value||0;o.note=$('#fnote').value;
+  o.total=Math.max(0,sumL(o.lines)-o.remise);
+  if(type==='bc'&&!o.tid)return toast('Choisissez un fournisseur');
+  if(type==='facture'){o.paid=Math.min(o.total,+$('#fpaid').value||0);o.mode=$('#fmode').value;o.due=$('#fdue').value||o.date}
+  if(!id)o.by=USER.name;
+  const w=whoList(type).find(x=>x.id===o.tid);o.tname=w?w.name:(DT[type].who==='client'?'Client comptoir':'');
+  if(type==='facture'&&old)stockMove(old.lines,1);
+  if(type==='facture')stockMove(o.lines,-1);
+  if(id){const i=D.docs[type].findIndex(x=>x.id===id);D.docs[type][i]=Object.assign(old,o)}
+  else{o.id=uid();o.num=nextNum(type,DT[type].p);D.docs[type].push(o)}
+  save();closeM();render();toast('Enregistré');
+}
+function delDoc(type,id){if(!can(type,'s'))return toast('Droit insuffisant');
+  if(!confirm('Supprimer ce document ?'))return;
+  const d=D.docs[type].find(x=>x.id===id);if(type==='facture')stockMove(d.lines,1);
+  D.docs[type]=D.docs[type].filter(x=>x.id!==id);save();render();toast('Supprimé');
+}
+function encaisser(id){if(!can('facture','o'))return toast('Droit insuffisant');const d=D.docs.facture.find(x=>x.id===id);ask('Encaisser — '+d.num,'Montant (reste : '+fmt(d.total-d.paid)+')',d.total-d.paid,v=>{if(v<=0)return toast('Montant invalide');d.paid=Math.min(d.total,d.paid+v);D.paiements.push({id:uid(),date:today(),kind:'client',tid:d.tid,amount:v,mode:$('#paymode').value,ref:d.num});save();closeM();render();toast('Paiement enregistré')},`<label style="margin-top:10px">Mode de paiement<select id="paymode">${MODES.map(m=>`<option>${m}</option>`).join('')}</select></label>`)}
+function convert(type,id){if(!can(type,'o'))return toast('Droit insuffisant');
+  const d=D.docs[type].find(x=>x.id===id);
+  openDocFromConvert(type,d);
+}
+function openDocFromConvert(type,d){
+  const pre={date:today(),tid:d.tid,lines:JSON.parse(JSON.stringify(d.lines)),remise:d.remise||0,paid:0,mode:'Espèces',note:'Réf. '+d.num};
+  openDoc('facture',null,pre);F.from={type,id:d.id};
+  const orig=window.saveDoc;
+}
+const _sd=saveDoc;
+saveDoc=function(){const from=F&&F.from;const n=D.docs.facture.length;_sd();if(from&&D.docs.facture.length>n){const s=D.docs[from.type].find(x=>x.id===from.id);if(s){s.conv=D.docs.facture[D.docs.facture.length-1].num;save();render()}}};
+function receive(id){if(!can('bc','o'))return toast('Droit insuffisant');
+  const d=D.docs.bc.find(x=>x.id===id);if(!confirm('Réceptionner ce bon de commande et ajouter les quantités au stock ?'))return;
+  const r={id:uid(),num:nextNum('REC','APP'),date:today(),fid:d.tid,lines:d.lines.filter(l=>l.pid),total:d.total,paid:0,src:d.num};
+  applyReappro(r.lines,1);D.reappro.push(r);d.recu=true;save();render();toast('Stock mis à jour');
+}
+
+/* impression */
+function statLabel(d,type){if(type!=='facture')return'';return`<div class="st">${stat(d)[0].toUpperCase()}</div>`}
+function nfr(n){n=Math.floor(Math.abs(n));if(!n)return'zéro';
+  const u=['','un','deux','trois','quatre','cinq','six','sept','huit','neuf','dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf'],t=['','','vingt','trente','quarante','cinquante','soixante'];
+  const b100=(x,fin)=>{if(x<20)return u[x];if(x<70){const d=Math.floor(x/10),r=x%10;return r===0?t[d]:r===1?t[d]+' et un':t[d]+'-'+u[r]}
+    if(x<80)return x===71?'soixante et onze':'soixante-'+u[x-60];
+    return'quatre-vingt'+(x===80&&fin?'s':'')+(x>80?'-'+u[x-80]:'')};
+  const b1000=(x,fin)=>{const h=Math.floor(x/100),r=x%100;let s='';if(h)s=(h>1?u[h]+' ':'')+'cent'+(h>1&&!r&&fin?'s':'');if(r)s+=(s?' ':'')+b100(r,fin);return s};
+  const m=Math.floor(n/1e6),th=Math.floor(n%1e6/1000),r=n%1000,p=[];
+  if(m)p.push(m===1?'un million':b1000(m,true)+' millions');
+  if(th)p.push(th===1?'mille':b1000(th,false)+' mille');
+  if(r)p.push(b1000(r,true));
+  return p.join(' ')}
+function docHtml(d,type){
+  const c=D.company,T=DT[type],s=sumL(d.lines),w=whoList(type).find(x=>x.id===d.tid)||{},f=type==='facture';
+  const addr=[c.addr1,c.addr2].filter(Boolean).join(', '),tels=[c.tel,c.tel2].filter(Boolean).join(' / ');
+  const line1=addr+(tels?(addr?' ':'')+'Tél : '+tels:'');
+  const legal=[c.ninea&&'NINEA : '+c.ninea,c.rc&&'RC : '+c.rc,c.gerant&&'Gérant : '+c.gerant].filter(Boolean).join(' — ');
+  const pct=s>0?Math.round((d.remise||0)/s*1000)/10:0;
+  const sl=f?stat(d):null,bst=f?(sl[0]==='Payé'?'color:#0b4a2b;border-color:#0b4a2b':sl[0]==='Partiel'?'color:#a67c00;border-color:#a67c00':'background:#d4a017;color:#0b4a2b;border-color:#0b4a2b'):'';
+  const dl=new Date(d.date+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const rows=d.lines.map((l,i)=>`<tr><td class="c">${i+1}</td><td class="b">${esc(l.ref||((D.produits.find(x=>x.id===l.pid)||{}).ref)||'')}</td><td style="font-size:${l.name.length>60?10:l.name.length>50?11:l.name.length>42?12:l.name.length>36?13:14}px">${esc(l.name)}</td><td class="r">${l.qty}</td><td class="r">${num(l.price)}</td><td class="r">${num(l.qty*l.price)}</td></tr>`).join('');
+  const who=T.who==='client'?'Client':'Fournisseur';
+  const wbox=`<b>${esc(d.tname||'—')}</b>`+(f?`<br>Échéance : ${fd(d.due||d.date)}<br>Paiement : ${esc(d.mode||'')}`:'')+(w.tel?`<br>Tél : ${esc(w.tel)}`:'')+(w.addr?`<br>${esc(w.addr)}`:'');
+  return`<div class="inv"><div class="stp"><i></i><i></i><i></i></div>
+  <div class="hd"><div class="hl">${c.logo?`<img class="lg" src="${c.logo}">`:''}<div><div class="cn">${esc(c.name)}</div><div class="ad">${esc(line1)}</div>${legal?`<div class="lgl">${esc(legal)}</div>`:''}</div></div>
+  <div class="hr"><div class="t1">${T.s}</div><div class="nu">N° ${d.num}</div><div class="dt">Date : ${fd(d.date)}</div>${f?`<div class="bd" style="${bst}">${sl[0]}</div>`:''}</div></div>
+  <div class="bx2"><div class="bx"><h5>${who}</h5>${wbox}</div><div class="bx"><h5>Document</h5>Format : A4<br>Établi par : ${esc(d.by||'—')}<br>Date : ${dl}</div></div>
+  <div class="tb"><table><colgroup><col style="width:5%"><col style="width:9%"><col style="width:52%"><col style="width:8%"><col style="width:12%"><col style="width:14%"></colgroup><thead><tr><th>N°</th><th>RÉF</th><th>DÉSIGNATION</th><th>QTÉ</th><th>P.U.</th><th>MONTANT</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <div class="bt"><div class="wd"><h5>Arrêté la présente à la somme de</h5><i>${nfr(d.total)} FCFA.</i></div>
+  <div class="tt"><div class="row"><span>Total brut</span><b>${num(s)} FCFA</b></div><div class="row br"><span>Remise (${pct} %)</span><b>- ${num(d.remise||0)} FCFA</b></div><div class="row bar g"><span>${f?'TOTAL À PAYER':'TOTAL'}</span><b>${fmt(d.total)}</b></div>${f?`<div class="row br"><span>Acompte versé</span><b>${fmt(d.paid||0)}</b></div><div class="row bar o"><span>SOLDE DÛ</span><b>${fmt(d.total-(d.paid||0))}</b></div>`:''}</div></div>
+  ${d.note?`<div style="margin-top:10px"><b>Note :</b> ${esc(d.note)}</div>`:''}
+  <div class="sg"><div>Établi par</div><div>Bon pour accord — ${T.who==='client'?'le client':'le fournisseur'}</div></div>
+  <div class="ft"><div class="fb"><div><b>${esc(c.name)}</b>${line1?' — '+esc(line1):''}<div class="m">${esc(c.footer)}</div></div><div>${T.t.replace(/s$/,'').replace('Factures proforma','Facture proforma').replace('Bons de','Bon de')} ${d.num} · ${fd(d.date)}</div></div><div class="stp"><i></i><i></i><i></i></div></div></div>`}
+function ticketHtml(d,type){
+  const c=D.company;
+  return`<div class="tk">${c.logo?`<div class="c"><img src="${c.logo}" style="max-width:40mm;max-height:20mm"></div>`:''}<h4>${esc(c.name)}</h4><div class="c">${esc(c.addr1)} ${esc(c.addr2)}<br>${c.tel||c.tel2?'Tél : '+esc([c.tel,c.tel2].filter(Boolean).join(' / ')):''}${c.ninea||c.rc?'<br>'+esc([c.ninea&&'NINEA '+c.ninea,c.rc&&'RC '+c.rc].filter(Boolean).join(' — ')):''}</div><hr><div>${DT[type].s} N° ${d.num}<br>Date : ${fd(d.date)}<br>Client : ${esc(d.tname||'Comptoir')}</div><hr>
+  <table>${d.lines.map(l=>`<tr><td colspan="2">${esc(l.name)}</td></tr><tr><td>${l.qty} x ${num(l.price)}</td><td style="text-align:right">${num(l.qty*l.price)}</td></tr>`).join('')}</table><hr>
+  <table><tr><td><b>TOTAL</b></td><td style="text-align:right"><b>${fmt(d.total)}</b></td></tr><tr><td>Encaissé</td><td style="text-align:right">${num(d.paid)}</td></tr><tr><td>Reste</td><td style="text-align:right">${num(d.total-d.paid)}</td></tr>${d.given>d.total?`<tr><td>Reçu</td><td style="text-align:right">${num(d.given)}</td></tr><tr><td>Rendu</td><td style="text-align:right">${num(d.given-d.total)}</td></tr>`:''}</table><hr><div class="c">${esc(c.footer)}</div></div>`}
+const getDoc=(type,id)=>D.docs[type].find(x=>x.id===id);
+function doPrint(type,id,mode){
+  const d=getDoc(type,id);
+  $('#pa').innerHTML=mode==='ticket'?ticketHtml(d,type):docHtml(d,type);
+  $('#pgs').textContent=mode==='ticket'?'@page{size:80mm auto;margin:3mm}':'@page{size:A4;margin:8mm}';
+  const t=document.title;document.title=d.num+(d.tname?' - '+d.tname:'');
+  window.onafterprint=()=>{document.title=t};
+  if(mode==='pdf')toast('Dans la fenêtre qui s\'ouvre, choisissez « Enregistrer au format PDF » comme imprimante.',5000);
+  setTimeout(()=>{try{window.print()}catch(e){toast('Impression indisponible ici : ouvrez le fichier dans votre navigateur')}},mode==='pdf'?600:120);
+}
+function preview(type,id){
+  const d=getDoc(type,id),f=type==='facture';
+  openM(`<div class="act" style="margin-bottom:10px;position:sticky;top:0;background:#fff;padding:6px 0;z-index:2;border-bottom:1px solid var(--bd)">
+  <button class="btn pri" onclick="doPrint('${type}','${id}','a4')">🖨 Imprimer</button>
+  <button class="btn gold" onclick="doPrint('${type}','${id}','pdf')">⬇ Télécharger PDF</button>
+  ${f?`<button class="btn" onclick="doPrint('${type}','${id}','ticket')">🎫 Ticket</button>`:''}
+  <button class="btn" onclick="wa('${type}','${id}')">📲 WhatsApp</button>
+  ${can(type,'m')?`<button class="btn" onclick="closeM();openDoc('${type}','${id}')">✏️ Modifier</button>`:''}
+  <button class="btn" style="margin-left:auto" onclick="closeM()">✕ Fermer</button></div>
+  <div id="pvbox" style="border:1px solid var(--bd);overflow:hidden"><div id="pvin" style="width:780px;transform-origin:0 0">${docHtml(d,type)}</div></div>`,900);
+  fitPv();window.onresize=fitPv;
+}
+function fitPv(){const b=$('#pvbox'),i=$('#pvin');if(!b||!i)return;const k=Math.min(1,b.clientWidth/780);i.style.transform='scale('+k+')';b.style.height=Math.ceil(i.offsetHeight*k)+2+'px'}
+function wa(type,id){
+  const d=getDoc(type,id),w=whoList(type).find(x=>x.id===d.tid)||{};let tel=(w.tel||'').replace(/\D/g,'');if(tel.length===9)tel='221'+tel;
+  const t=`${DT[type].s} ${d.num} — ${D.company.name}\nDate : ${fd(d.date)}\nTotal : ${fmt(d.total)}`+(type==='facture'?`\nReste à payer : ${fmt(d.total-(d.paid||0))}`:'')+`\n${D.company.footer}`;
+  window.open('https://wa.me/'+tel+'?text='+encodeURIComponent(t),'_blank');
+}
+
+/* charges, argent, dépôts */
+function catBox(L){const m={},t=L.reduce((a,c)=>a+c.amount,0);L.forEach(c=>m[c.cat]=(m[c.cat]||0)+c.amount);const k=Object.keys(m).sort();return k.length?`<div class="box"><h3>Total par catégorie</h3><table><tbody>${k.map(x=>`<tr><td>${esc(x)}</td><td class="r">${fmt(m[x])}</td></tr>`).join('')}</tbody><tfoot><tr><td>Total</td><td class="r">${fmt(t)}</td></tr></tfoot></table></div>`:''}
+const sumS=(L,v)=>L.filter(x=>x.sens===v).reduce((a,x)=>a+x.amount,0);
+VIEW.charges=()=>({h:hd('Charges et dépenses','',"openForm('charges')",'Nouvelle charge'),b:()=>{
+  const L=D.charges.filter(c=>match(Q,c.label,c.cat,fd(c.date))).sort((a,b)=>b.date.localeCompare(a.date));
+  const m=today().slice(0,7);
+  return`<div class="cards"><div class="card"><small>Ce mois</small><b>${fmt(D.charges.filter(c=>c.date.slice(0,7)===m).reduce((a,c)=>a+c.amount,0))}</b></div><div class="card"><small>Total général</small><b>${fmt(D.charges.reduce((a,c)=>a+c.amount,0))}</b></div><div class="card"><small>Total affiché (${L.length})</small><b>${fmt(L.reduce((a,c)=>a+c.amount,0))}</b></div></div>`+
+  tbl(['Date','Catégorie','Libellé','Mode','>Montant','Actions'],L.map(c=>`<tr><td>${fd(c.date)}</td><td>${esc(c.cat)}</td><td>${esc(c.label)}</td><td>${esc(c.mode)}</td><td class="r">${fmt(c.amount)}</td><td>${ab('charges',c.id)}</td></tr>`),`<tr><td colspan="4">Total</td><td class="r">${fmt(L.reduce((a,c)=>a+c.amount,0))}</td><td></td></tr>`)+catBox(L)}});
+VIEW.argent=()=>({h:hd('Dépôt d\'argent','Entrées et sorties de fonds',"openForm('argent')",'Nouveau dépôt'),b:()=>{
+  const L=D.argent.filter(c=>match(Q,c.who,c.note,c.mode,fd(c.date))).sort((a,b)=>b.date.localeCompare(a.date));
+  const e=D.argent.filter(x=>x.sens==='Entrée').reduce((a,x)=>a+x.amount,0),s=D.argent.filter(x=>x.sens==='Sortie').reduce((a,x)=>a+x.amount,0);
+  return`<div class="cards"><div class="card"><small>Total entrées</small><b>${fmt(e)}</b></div><div class="card"><small>Total sorties</small><b>${fmt(s)}</b></div><div class="card"><small>Solde net</small><b>${fmt(e-s)}</b></div></div>`+
+  tbl(['Date','Sens','Déposant / Compte','Mode','Note','>Montant','Actions'],L.map(x=>`<tr><td>${fd(x.date)}</td><td><span class="tag ${x.sens==='Entrée'?'t-ok':'t-b'}">${x.sens}</span></td><td>${esc(x.who)}</td><td>${esc(x.mode)}</td><td>${esc(x.note)}</td><td class="r">${fmt(x.amount)}</td><td>${ab('argent',x.id)}</td></tr>`),`<tr><td colspan="5">Total entrées</td><td class="r">${fmt(sumS(L,'Entrée'))}</td><td></td></tr><tr><td colspan="5">Total sorties</td><td class="r">${fmt(sumS(L,'Sortie'))}</td><td></td></tr><tr><td colspan="5">Solde net</td><td class="r">${fmt(sumS(L,'Entrée')-sumS(L,'Sortie'))}</td><td></td></tr>`)}});
+VIEW.depots=()=>({h:hd('Dépôts','Lieux de stockage du magasin',"openForm('depots')",'Nouveau dépôt'),b:()=>{
+  const L=D.depots.filter(d=>match(Q,d.name,d.addr,d.resp));
+  return tbl(['Dépôt','Adresse','Responsable','>Produits','>Valeur du stock','Actions'],L.map(d=>{const ps=D.produits.filter(p=>p.depot===d.name);return`<tr><td><b>${esc(d.name)}</b></td><td>${esc(d.addr)}</td><td>${esc(d.resp)}</td><td class="r">${ps.length}</td><td class="r">${fmt(ps.reduce((a,p)=>a+p.stock*p.pa,0))}</td><td>${ab('depots',d.id)}</td></tr>`}),`<tr><td colspan="3">Total (${L.length})</td><td class="r">${L.reduce((a,d)=>a+D.produits.filter(p=>p.depot===d.name).length,0)}</td><td class="r">${fmt(L.reduce((a,d)=>a+D.produits.filter(p=>p.depot===d.name).reduce((x,p)=>x+p.stock*p.pa,0),0))}</td><td></td></tr>`)}});
+
+/* utilisateurs */
+VIEW.users=()=>({h:hd('Utilisateurs','Codes d\'accès et droits',"openUser()",'Nouvel utilisateur'),b:()=>{
+  const L=G.users.filter(u=>match(Q,u.name,ROLES[u.role]));
+  return tbl(['Nom','Rôle','Code','Magasins','Menus','Actions'],L.map(u=>`<tr><td><b>${esc(u.name)}</b></td><td>${ROLES[u.role]}</td><td>${'•'.repeat(u.code.length)}</td><td>${u.stores.includes('*')?'Tous':u.stores.map(s=>esc((G.stores.find(x=>x.id===s)||{}).name||'')).join(', ')}</td><td>${u.role==='admin'?'Tous':Object.keys(permsOf(u)).length+' menu(s)'}</td><td><div class="act"><button class="btn sm" onclick="openUser('${u.id}')">✏️ Modifier</button><button class="btn sm dg" onclick="delUser('${u.id}')">🗑</button></div></td></tr>`),`<tr><td colspan="6">Total : ${L.length} utilisateur(s) — ${L.filter(u=>u.role==='admin').length} admin · ${L.filter(u=>u.role==='gerant').length} gérant(s) · ${L.filter(u=>u.role==='vendeur').length} vendeur(s)</td></tr>`)}});
+function permMatrix(pm){
+  return`<div class="box" style="margin:6px 0 0"><table><thead><tr><th>Menu / page</th>${ACTS.map(a=>`<th style="text-align:center">${a[1]}<br><label style="display:inline;font-size:11px;color:#fff"><input type="checkbox" style="width:auto;display:inline;margin:0" onchange="pmCol('${a[0]}',this.checked)"> tout</label></th>`).join('')}</tr></thead><tbody>${PGP.map(g=>`<tr><td>${g[2]} <b>${g[1]}</b></td>${ACTS.map(a=>{const ok=g[0]!=='dash'||a[0]==='v';return`<td style="text-align:center">${ok?`<input type="checkbox" class="pm" id="pm_${g[0]}_${a[0]}" style="width:auto;margin:0" ${pm[g[0]]&&pm[g[0]][a[0]]?'checked':''}>`:'—'}</td>`}).join('')}</tr>`).join('')}</tbody></table></div>`}
+function pmCol(a,on){document.querySelectorAll('.pm[id$="_'+a+'"]').forEach(x=>{if(!x.disabled)x.checked=on})}
+function applyTpl(){const r=$('#ur').value,ad=r==='admin',pm=defPerms(r);
+  document.querySelectorAll('.pm').forEach(x=>{const m=x.id.split('_');x.checked=ad||!!(pm[m[1]]&&pm[m[1]][m[2]]);x.disabled=ad});$('#padm').classList.toggle('hide',!ad)}
+function openUser(id){
+  const u=id?G.users.find(x=>x.id===id):{name:'',code:'',role:'vendeur',stores:[]};
+  openM(`<h3>${id?'Modifier':'Nouvel'} utilisateur</h3><div class="grid2"><label>Nom<input id="un" value="${esc(u.name)}"></label><label>Code (4 à 6 chiffres)<input id="uc" inputmode="numeric" maxlength="6" value="${esc(u.code)}"></label>
+  <label>Rôle (modèle de droits)<select id="ur" onchange="applyTpl()">${Object.keys(ROLES).map(r=>`<option value="${r}" ${r===u.role?'selected':''}>${ROLES[r]}</option>`).join('')}</select></label></div>
+  <p style="margin:12px 0 4px;font-weight:600;color:var(--mu);font-size:12px">MAGASINS AUTORISÉS</p>
+  <label style="display:flex;gap:6px;align-items:center;color:var(--tx)"><input type="checkbox" id="uall" style="width:auto;margin:0" ${u.stores.includes('*')?'checked':''}> Tous les magasins</label>
+  ${G.stores.map(s=>`<label style="display:flex;gap:6px;align-items:center;color:var(--tx)"><input type="checkbox" class="us" value="${s.id}" style="width:auto;margin:0" ${u.stores.includes(s.id)?'checked':''}> ${s.icon} ${esc(s.name)}</label>`).join('')}
+  <p style="margin:14px 0 2px;font-weight:600;color:var(--mu);font-size:12px">DROITS PAR PAGE (menu)</p>
+  <p style="margin:0;font-size:12px;color:var(--mu)">Voir = afficher le menu · Opérations = encaisser, règlement, facturer, réceptionner, inventaire. Changer le rôle recharge le modèle correspondant. Utilisateurs et Paramètres restent réservés à l'administrateur.</p>
+  <p id="padm" class="hide" style="margin:6px 0;font-weight:700;color:var(--g)">L'administrateur a tous les droits.</p>
+  ${permMatrix(permsOf(u))}
+  <div class="mb"><button class="btn" onclick="closeM()">Annuler</button><button class="btn pri" onclick="saveUser('${id||''}')">Enregistrer</button></div>`,900);
+  if(u.role==='admin'){document.querySelectorAll('.pm').forEach(x=>{x.checked=true;x.disabled=true});$('#padm').classList.remove('hide')}}
+function saveUser(id){
+  const name=$('#un').value.trim(),code=$('#uc').value.trim(),role=$('#ur').value;
+  if(!name)return toast('Nom obligatoire');if(!/^\d{4,6}$/.test(code))return toast('Le code doit avoir 4 à 6 chiffres');
+  if(G.users.some(u=>u.code===code&&u.id!==id))return toast('Ce code est déjà utilisé');
+  const stores=$('#uall').checked?['*']:[...document.querySelectorAll('.us:checked')].map(x=>x.value);
+  if(!stores.length)return toast('Choisissez au moins un magasin');
+  let perms=null;
+  if(role!=='admin'){perms={};PGP.forEach(g=>{const o={};ACTS.forEach(a=>{const e=document.getElementById('pm_'+g[0]+'_'+a[0]);if(e&&e.checked)o[a[0]]=1});if(Object.keys(o).length){o.v=1;perms[g[0]]=o}});if(!Object.keys(perms).length)return toast('Donnez accès à au moins une page')}
+  if(id){const u=G.users.find(x=>x.id===id);if(u.role==='admin'&&role!=='admin'&&G.users.filter(x=>x.role==='admin').length===1)return toast('Gardez au moins un administrateur');Object.assign(u,{name,code,role,stores,perms})}
+  else G.users.push({id:uid(),name,code,role,stores,perms});
+  saveG();closeM();render();toast('Enregistré');
+}
+function delUser(id){const u=G.users.find(x=>x.id===id);if(id===USER.id)return toast('Vous ne pouvez pas vous supprimer');if(u.role==='admin'&&G.users.filter(x=>x.role==='admin').length===1)return toast('Gardez au moins un administrateur');if(!confirm('Supprimer cet utilisateur ?'))return;G.users=G.users.filter(x=>x.id!==id);saveG();render()}
+
+/* paramètres */
+VIEW.params=()=>({h:`<div class="ph"><h2>Paramètres</h2></div>`,b:()=>{
+  const c=D.company,st=G.stores.find(x=>x.id===SID);
+  return`<div class="box"><h3>Informations du magasin « ${esc(st.name)} » (propres à ce magasin)</h3><div style="padding:12px">
+  <div style="display:flex;gap:14px;align-items:center;margin-bottom:12px;flex-wrap:wrap"><div style="width:90px;height:90px;border:2px dashed var(--bd);border-radius:10px;display:grid;place-items:center;overflow:hidden;background:#fafafa;color:var(--mu);font-size:11px;text-align:center">${c.logo?`<img src="${c.logo}" style="max-width:100%;max-height:100%">`:'Aucun logo'}</div>
+  <div class="act"><label class="btn" style="margin:0;color:var(--tx);font-size:14px;font-weight:400">🖼 Importer un logo<input type="file" accept="image/*" onchange="impLogo(this)" style="display:none"></label>${c.logo?`<button class="btn dg" onclick="rmLogo()">Retirer le logo</button>`:''}</div></div>
+  <div class="grid2">
+  <label>Nom (affiché sur les documents)<input id="cn" value="${esc(c.name)}"></label><label>Adresse<input id="ca1" value="${esc(c.addr1)}"></label><label>Adresse (suite)<input id="ca2" value="${esc(c.addr2)}"></label>
+  <label>Téléphone 1<input id="ct" value="${esc(c.tel)}"></label><label>Téléphone 2<input id="ct2" value="${esc(c.tel2)}"></label><label>E-mail<input id="ce" value="${esc(c.email)}"></label>
+  <label>NINEA<input id="cx" value="${esc(c.ninea)}"></label><label>RC<input id="cr" value="${esc(c.rc)}"></label><label>Gérant<input id="cg" value="${esc(c.gerant)}"></label>
+  <label class="full">Message en bas des documents<input id="cf" value="${esc(c.footer)}"></label></div>
+  <div class="mb"><button class="btn pri" onclick="saveCompany()">Enregistrer</button></div></div></div>
+  <div class="box"><h3>Magasins (données totalement séparées)</h3><table><tbody>${G.stores.map(s=>`<tr><td style="font-size:22px">${s.icon}</td><td><b>${esc(s.name)}</b>${s.id===SID?' <span class="tag t-ok">actuel</span>':''}</td><td><div class="act"><button class="btn sm" onclick="openStore('${s.id}')">✏️ Modifier</button><button class="btn sm dg" onclick="delStore('${s.id}')">🗑</button></div></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3">Total : ${G.stores.length} magasin(s) · ${G.users.length} utilisateur(s)</td></tr></tfoot></table><div style="padding:10px"><button class="btn gold" onclick="openStore()">+ Nouveau magasin</button></div></div>
+  <div class="box"><h3>Sauvegarde du magasin actuel</h3><div style="padding:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="expo()">⬇ Exporter (JSON)</button><label class="btn" style="margin:0;color:var(--tx);font-size:14px;font-weight:400">⬆ Importer<input type="file" accept=".json" onchange="impo(this)" style="display:none"></label><button class="btn dg" onclick="resetStore()">Effacer les données de ce magasin</button></div></div>`}});
+function saveCompany(q){const g=i=>$('#'+i).value.trim();Object.assign(D.company,{name:g('cn')||D.company.name,addr1:g('ca1'),addr2:g('ca2'),tel:g('ct'),tel2:g('ct2'),email:g('ce'),ninea:g('cx'),rc:g('cr'),gerant:g('cg'),footer:$('#cf').value});save();if(!q)toast('Enregistré')}
+function impLogo(i){const f=i.files[0];if(!f)return;logoResize(f,u=>{saveCompany(1);D.company.logo=u;save();render();toast('Logo enregistré')})}
+function rmLogo(){saveCompany(1);D.company.logo='';save();render()}
+let SLOGO='';
+function logoResize(f,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,300/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=Math.max(1,Math.round(im.width*k));cv.height=Math.max(1,Math.round(im.height*k));cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);cb(cv.toDataURL('image/png'))};im.onerror=()=>toast('Image invalide');im.src=r.result};r.readAsDataURL(f)}
+function slPrev(){$('#slp').innerHTML=SLOGO?`<img src="${SLOGO}" style="max-width:100%;max-height:100%">`:'Aucun logo'}
+function impSLogo(i){const f=i.files[0];if(f)logoResize(f,u=>{SLOGO=u;slPrev()})}
+function openStore(id){
+  const s=id?G.stores.find(x=>x.id===id):{name:'',icon:'🏪'};
+  const c=Object.assign({},newData().company,id?(id===SID?D.company:((lg('gt_d_'+id,null)||{}).company||{})):{});
+  SLOGO=c.logo||'';
+  openM(`<h3>${id?'Modifier':'Nouveau'} magasin</h3>
+  <div class="grid2"><label>Nom du magasin (affiché à la connexion)<input id="sn" value="${esc(s.name)}"></label></div>
+  <p style="margin:12px 0 4px;font-size:12px;font-weight:600;color:var(--mu)">ICÔNE</p><div style="display:flex;gap:6px;flex-wrap:wrap" id="sic">${ICONS.map(i=>`<button class="btn" style="font-size:22px;${i===s.icon?'background:var(--yl)':''}" onclick="this.parentNode.querySelectorAll('button').forEach(b=>b.style.background='');this.style.background='var(--yl)';this.parentNode.dataset.v='${i}'">${i}</button>`).join('')}</div>
+  <p style="margin:14px 0 6px;font-size:12px;font-weight:600;color:var(--mu)">INFORMATIONS DE CE MAGASIN (documents)</p>
+  <div style="display:flex;gap:14px;align-items:center;margin-bottom:12px;flex-wrap:wrap"><div id="slp" style="width:80px;height:80px;border:2px dashed var(--bd);border-radius:10px;display:grid;place-items:center;overflow:hidden;background:#fafafa;color:var(--mu);font-size:11px;text-align:center"></div>
+  <div class="act"><label class="btn" style="margin:0;color:var(--tx);font-size:14px;font-weight:400">🖼 Importer un logo<input type="file" accept="image/*" onchange="impSLogo(this)" style="display:none"></label><button class="btn dg" onclick="SLOGO='';slPrev()">Retirer</button></div></div>
+  <div class="grid2"><label>Nom (sur les documents)<input id="mn" value="${esc(c.name)}"></label><label>Adresse<input id="ma1" value="${esc(c.addr1)}"></label><label>Adresse (suite)<input id="ma2" value="${esc(c.addr2)}"></label>
+  <label>Téléphone 1<input id="mt" value="${esc(c.tel)}"></label><label>Téléphone 2<input id="mt2" value="${esc(c.tel2)}"></label><label>E-mail<input id="me" value="${esc(c.email)}"></label>
+  <label>NINEA<input id="mx" value="${esc(c.ninea)}"></label><label>RC<input id="mr" value="${esc(c.rc)}"></label><label>Gérant<input id="mg" value="${esc(c.gerant)}"></label>
+  <label class="full">Message en bas des documents<input id="mf" value="${esc(c.footer)}"></label></div>
+  <div class="mb"><button class="btn" onclick="closeM()">Annuler</button><button class="btn pri" onclick="saveStore('${id||''}','${s.icon}')">Enregistrer</button></div>`);
+  slPrev();
+}
+function saveStore(id,oldIcon){
+  const n=$('#sn').value.trim();if(!n)return toast('Nom du magasin obligatoire');
+  const ic=$('#sic').dataset.v||oldIcon,g=i=>$('#'+i).value.trim();
+  const co={logo:SLOGO,name:g('mn')||n,addr1:g('ma1'),addr2:g('ma2'),tel:g('mt'),tel2:g('mt2'),email:g('me'),ninea:g('mx'),rc:g('mr'),gerant:g('mg'),footer:$('#mf').value};
+  let sid=id;
+  if(id)Object.assign(G.stores.find(x=>x.id===id),{name:n,icon:ic});else{sid='s'+uid();G.stores.push({id:sid,name:n,icon:ic})}
+  if(sid===SID){Object.assign(D.company,co);save()}else{const d=lg('gt_d_'+sid,null)||newData();d.company=Object.assign({},d.company||{},co);ls('gt_d_'+sid,d)}
+  saveG();closeM();render();toast('Magasin enregistré');
+}
+function delStore(id){if(G.stores.length===1)return toast('Gardez au moins un magasin');if(id===SID)return toast('Changez de magasin avant de supprimer celui-ci');if(!confirm('Supprimer ce magasin ET toutes ses données ?'))return;G.stores=G.stores.filter(x=>x.id!==id);G.users.forEach(u=>{if(!u.stores.includes('*'))u.stores=u.stores.filter(s=>s!==id)});try{localStorage.removeItem('gt_d_'+id)}catch(e){}delete MEM['gt_d_'+id];saveG();render()}
+function expo(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D)],{type:'application/json'}));a.download='sauvegarde-'+SID+'-'+today()+'.json';a.click()}
+function impo(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.docs||!d.produits)throw 0;if(!confirm('Remplacer les données de ce magasin par cette sauvegarde ?'))return;D=d;save();loadStore(SID);render();toast('Sauvegarde importée')}catch(e){toast('Fichier invalide')}};r.readAsText(f)}
+function resetStore(){if(!confirm('Effacer TOUTES les données de ce magasin ?')||!confirm('Dernière confirmation : cette action est définitive.'))return;D=newData();save();render()}
+
+drawLogin();
+/* ================= RAPPORTS ================= */
+const dd=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+const RPS={pre:'month',from:'',to:''};
+function rpRange(p){const n=new Date(),y=n.getFullYear(),m=n.getMonth(),iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+ if(p==='today')return[today(),today()];
+ if(p==='week'){const d=new Date(n);d.setDate(n.getDate()-((n.getDay()+6)%7));return[iso(d),today()]}
+ if(p==='month')return[iso(new Date(y,m,1)),today()];
+ if(p==='last')return[iso(new Date(y,m-1,1)),iso(new Date(y,m,0))];
+ if(p==='year')return[y+'-01-01',today()];
+ return['',''];}
+{const r=rpRange('month');RPS.from=r[0];RPS.to=r[1]}
+const inR=d=>(!RPS.from||d>=RPS.from)&&(!RPS.to||d<=RPS.to);
+const S=(a,f)=>a.reduce((s,x)=>s+(+f(x)||0),0);
+const grp=(a,f)=>{const m={};a.forEach(x=>{const k=f(x);(m[k]=m[k]||[]).push(x)});return m};
+const FT=()=>D.docs.facture.filter(d=>inR(d.date));
+const prodOf=l=>D.produits.find(p=>p.id===l.pid)||{};
+const lcost=l=>(+l.qty||0)*(+prodOf(l).pa||0);
+const icost=d=>S(d.lines||[],lcost);
+const imarge=d=>d.total-icost(d);
+const reste=d=>d.total-(d.paid||0);
+const mlabel=k=>k.split('-').reverse().join('/');
+const pct=(a,b)=>b?a/b*100:0;
+const cd=(l,v,al)=>[l,v,!!al];
+const lineRows=(L,kf)=>{const m={};L.forEach(d=>(d.lines||[]).forEach(l=>{const p=prodOf(l),k=kf(l,p),o=m[k]=m[k]||{qty:0,ca:0,co:0,p,l};o.qty+=+l.qty||0;o.ca+=(+l.qty||0)*(+l.price||0);o.co+=lcost(l)}));return Object.entries(m).map(([k,o])=>Object.assign({k},o))};
+const vCards=L=>[cd('Factures',L.length),cd("Chiffre d'affaires",fmt(S(L,d=>d.total))),cd('Encaissé',fmt(S(L,d=>d.paid))),cd('Reste à encaisser',fmt(S(L,reste)),S(L,reste)>0),cd('Marge brute',fmt(S(L,imarge)))];
+const tagStat=d=>stat(d);
+const tiers=(kind,id)=>{const e=(kind==='client'?D.clients:D.fournisseurs).find(x=>x.id===id);return e?e.name:(kind==='client'?'Client comptoir':'—')};
+const colsGrp=[['Nb','q',1],['Total','n',1],['Encaissé','n',1],['Reste','n',1]];
+
+const RV={
+/* ---- Ventes ---- */
+vj:()=>{const L=FT(),g=grp(L,d=>d.date);return{cards:vCards(L),cols:[['Date','d'],['Nb factures','q',1],['Total facturé','n',1],['Encaissé','n',1],['Reste à payer','n',1]],rows:Object.keys(g).sort().reverse().map(k=>[k,g[k].length,S(g[k],d=>d.total),S(g[k],d=>d.paid),S(g[k],reste)])}},
+vm:()=>{const L=FT(),g=grp(L,d=>d.date.slice(0,7));return{cards:vCards(L),cols:[['Mois','t'],['Nb factures','q',1],['Total facturé','n',1],['Encaissé','n',1],['Marge brute','n',1]],rows:Object.keys(g).sort().reverse().map(k=>[mlabel(k),g[k].length,S(g[k],d=>d.total),S(g[k],d=>d.paid),S(g[k],imarge)])}},
+vc:()=>{const L=FT(),g=grp(L,d=>d.tname||'Client comptoir');return{cards:vCards(L),cols:[['Client','t'],...colsGrp],rows:Object.keys(g).map(k=>[k,g[k].length,S(g[k],d=>d.total),S(g[k],d=>d.paid),S(g[k],reste)]).sort((a,b)=>b[2]-a[2])}},
+vp:()=>{const L=FT(),R=lineRows(L,(l,p)=>l.pid||l.name);return{cards:vCards(L),cols:[['Réf.','t'],['Produit','t'],['Catégorie','t'],['Qté vendue','q',1],['CA','n',1],["Coût d'achat",'n',1],['Marge','n',1],['Marge %','p']],rows:R.map(o=>[o.l.ref||o.p.ref||'',o.l.name||o.p.name||'',o.p.cat||'—',o.qty,o.ca,o.co,o.ca-o.co,pct(o.ca-o.co,o.ca)]).sort((a,b)=>b[4]-a[4]),note:"Le coût utilise le prix d'achat actuel du produit. Le CA est avant remise globale."}},
+vcat:()=>{const L=FT(),R=lineRows(L,(l,p)=>p.cat||'Sans catégorie');return{cards:vCards(L),cols:[['Catégorie','t'],['Qté vendue','q',1],['CA','n',1],["Coût d'achat",'n',1],['Marge','n',1],['Marge %','p']],rows:R.map(o=>[o.k,o.qty,o.ca,o.co,o.ca-o.co,pct(o.ca-o.co,o.ca)]).sort((a,b)=>b[2]-a[2])}},
+vv:()=>{const L=FT(),g=grp(L,d=>d.by||'—');return{cards:vCards(L),cols:[['Vendeur','t'],...colsGrp],rows:Object.keys(g).map(k=>[k,g[k].length,S(g[k],d=>d.total),S(g[k],d=>d.paid),S(g[k],reste)]).sort((a,b)=>b[2]-a[2])}},
+vmode:()=>{const L=FT(),g=grp(L,d=>d.mode||'—');return{cards:vCards(L),cols:[['Mode de paiement','t'],['Nb factures','q',1],['Total facturé','n',1],['Encaissé','n',1]],rows:Object.keys(g).map(k=>[k,g[k].length,S(g[k],d=>d.total),S(g[k],d=>d.paid)]).sort((a,b)=>b[3]-a[3])}},
+vmarge:()=>{const L=FT();return{cards:vCards(L),cols:[['Date','d'],['N°','t'],['Client','t'],['Total','n',1],['Coût','n',1],['Marge','n',1],['Marge %','p']],rows:L.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.num.localeCompare(a.num)).map(d=>[d.date,d.num,d.tname||'Client comptoir',d.total,icost(d),imarge(d),pct(imarge(d),d.total)])}},
+vlist:()=>{const L=FT();return{cards:vCards(L),cols:[['Date','d'],['N°','t'],['Client','t'],['Vendeur','t'],['Remise','n',1],['Total','n',1],['Encaissé','n',1],['Reste','n',1],['Statut','g']],rows:L.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.num.localeCompare(a.num)).map(d=>[d.date,d.num,d.tname||'Client comptoir',d.by||'',d.remise||0,d.total,d.paid||0,reste(d),tagStat(d)])}},
+/* ---- Clients ---- */
+cs:()=>{const R=D.clients.map(c=>{const t=partyTot('client',c.id);return[c.name,c.tel||'',t.t,t.p,c.credit||0,solde('client',c.id)]});
+  const cpt=D.docs.facture.filter(d=>!d.tid&&reste(d)>0);if(cpt.length)R.push(['Clients comptoir (impayés)','',S(cpt,d=>d.total),S(cpt,d=>d.paid),0,S(cpt,reste)]);
+  R.sort((a,b)=>b[5]-a[5]);const dt=S(R,r=>Math.max(0,r[5]));
+  return{cards:[cd('Clients',D.clients.length),cd('Total dû par les clients',fmt(dt),dt>0),cd('Clients débiteurs',R.filter(r=>r[5]>0).length),cd('Avances reçues',fmt(S(D.clients,c=>c.credit)))],cols:[['Client','t'],['Téléphone','t'],['Total facturé','n',1],['Encaissé','n',1],['Avance','n',1],['Solde dû','n',1]],rows:R}},
+ci:()=>{const L=D.docs.facture.filter(d=>reste(d)>0&&inR(d.date));return{cards:[cd('Factures impayées',L.length),cd('Montant à encaisser',fmt(S(L,reste)),L.length>0)],cols:[['Date','d'],['N°','t'],['Client','t'],['Total','n',1],['Payé','n',1],['Reste','n',1],['Échéance','d'],['Retard (j)','q']],rows:L.map(d=>[d.date,d.num,d.tname||'Client comptoir',d.total,d.paid||0,reste(d),d.due||d.date,Math.max(0,dd(d.due||d.date,today()))]).sort((a,b)=>b[7]-a[7])}},
+cage:()=>{const L=D.docs.facture.filter(d=>reste(d)>0),g=grp(L,d=>d.tname||'Client comptoir'),b=(d,lo,hi)=>{const a=dd(d.due||d.date,today());return a>=lo&&a<=hi?reste(d):0};
+  const rows=Object.keys(g).map(k=>{const x=g[k];return[k,S(x,d=>b(d,-1e4,30)),S(x,d=>b(d,31,60)),S(x,d=>b(d,61,90)),S(x,d=>b(d,91,1e5)),S(x,reste)]}).sort((a,b)=>b[5]-a[5]);
+  return{cards:[cd('Total impayé',fmt(S(L,reste)),L.length>0),cd('En retard de +90 j',fmt(S(rows,r=>r[4])),S(rows,r=>r[4])>0)],cols:[['Client','t'],['0-30 j','n',1],['31-60 j','n',1],['61-90 j','n',1],['+90 j','n',1],['Total','n',1]],rows,note:"Ancienneté calculée depuis la date d'échéance (ou de facture)."}},
+ctop:()=>{const L=FT(),g=grp(L,d=>d.tname||'Client comptoir'),T=S(L,d=>d.total);return{cards:vCards(L),cols:[['Rang','q'],['Client','t'],['Nb factures','q',1],['Chiffre d\'affaires','n',1],['Part du CA','p']],rows:Object.keys(g).map(k=>[k,g[k].length,S(g[k],d=>d.total)]).sort((a,b)=>b[2]-a[2]).slice(0,30).map((r,i)=>[i+1,r[0],r[1],r[2],pct(r[2],T)])}},
+creg:()=>{const L=D.paiements.filter(x=>x.kind==='client'&&inR(x.date));return{cards:[cd('Règlements',L.length),cd('Total encaissé',fmt(S(L,x=>x.amount)))],cols:[['Date','d'],['Client','t'],['Mode','t'],['Montant','n',1]],rows:L.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>[x.date,tiers('client',x.tid),x.mode,x.amount])}},
+cinact:()=>{const rows=D.clients.map(c=>{const f=D.docs.facture.filter(d=>d.tid===c.id).map(d=>d.date).sort().pop();return[c.name,c.tel||'',f||'',f?dd(f,today()):9999,solde('client',c.id)]}).filter(r=>r[3]>60).sort((a,b)=>b[3]-a[3]);
+  return{cards:[cd('Clients inactifs (+60 j)',rows.length)],cols:[['Client','t'],['Téléphone','t'],['Dernier achat','d'],['Jours sans achat','q'],['Solde dû','n',1]],rows:rows.map(r=>[r[0],r[1],r[2],r[3]===9999?'Jamais':r[3],r[4]]),note:'Clients sans achat depuis plus de 60 jours : à relancer.'}},
+/* ---- Achats ---- */
+af:()=>{const L=D.reappro.filter(r=>inR(r.date)),g=grp(L,r=>tiers('fournisseur',r.fid));return{cards:[cd('Approvisionnements',L.length),cd('Total achats',fmt(S(L,r=>r.total))),cd('Payé',fmt(S(L,r=>r.paid))),cd('Reste à payer',fmt(S(L,reste)),S(L,reste)>0)],cols:[['Fournisseur','t'],...colsGrp.map(c=>c[0]==='Encaissé'?['Payé','n',1]:c)],rows:Object.keys(g).map(k=>[k,g[k].length,S(g[k],r=>r.total),S(g[k],r=>r.paid),S(g[k],reste)]).sort((a,b)=>b[2]-a[2])}},
+ad:()=>{const R=D.fournisseurs.map(f=>{const t=partyTot('fournisseur',f.id);return[f.name,f.tel||'',t.t,t.p,f.credit||0,solde('fournisseur',f.id)]}).sort((a,b)=>b[5]-a[5]);const dt=S(R,r=>Math.max(0,r[5]));return{cards:[cd('Fournisseurs',R.length),cd('Dettes totales',fmt(dt),dt>0)],cols:[['Fournisseur','t'],['Téléphone','t'],['Total achats','n',1],['Payé','n',1],['Avance','n',1],['Solde à payer','n',1]],rows:R}},
+aj:()=>{const L=D.reappro.filter(r=>inR(r.date));return{cards:[cd('Approvisionnements',L.length),cd('Total',fmt(S(L,r=>r.total)))],cols:[['Date','d'],['N°','t'],['Fournisseur','t'],['Lignes','q'],['Total','n',1],['Payé','n',1],['Reste','n',1],['Statut','g']],rows:L.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(r=>[r.date,r.num,tiers('fournisseur',r.fid),(r.lines||[]).length,r.total,r.paid||0,reste(r),stat(r)])}},
+ap:()=>{const L=D.reappro.filter(r=>inR(r.date)),m={};L.forEach(r=>(r.lines||[]).forEach(l=>{const k=l.pid||l.name,o=m[k]=m[k]||{n:l.name,q:0,a:0};o.q+=+l.qty||0;o.a+=(+l.qty||0)*(+l.price||0)}));return{cards:[cd('Produits achetés',Object.keys(m).length),cd('Total achats',fmt(S(L,r=>r.total)))],cols:[['Produit','t'],['Qté achetée','q',1],['Montant','n',1],['Prix moyen','n']],rows:Object.values(m).map(o=>[o.n,o.q,o.a,o.q?o.a/o.q:0]).sort((a,b)=>b[2]-a[2])}},
+areg:()=>{const L=D.paiements.filter(x=>x.kind==='fournisseur'&&inR(x.date));return{cards:[cd('Règlements',L.length),cd('Total payé',fmt(S(L,x=>x.amount)))],cols:[['Date','d'],['Fournisseur','t'],['Mode','t'],['Montant','n',1]],rows:L.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>[x.date,tiers('fournisseur',x.tid),x.mode,x.amount])}},
+abc:()=>{const L=D.docs.bc.filter(d=>inR(d.date));return{cards:[cd('Bons de commande',L.length),cd('En attente',L.filter(d=>!d.recu).length,L.some(d=>!d.recu)),cd('Montant',fmt(S(L,d=>d.total)))],cols:[['Date','d'],['N°','t'],['Fournisseur','t'],['Lignes','q'],['Total','n',1],['Statut','g']],rows:L.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(d=>[d.date,d.num,d.tname||'—',(d.lines||[]).length,d.total,d.recu?['Reçu','t-ok']:['En attente','t-w']])}},
+/* ---- Stock ---- */
+sCards:L=>[cd('Produits',L.length),cd("Valeur d'achat",fmt(S(L,p=>p.stock*p.pa))),cd('Valeur de vente',fmt(S(L,p=>p.stock*p.pv))),cd('Marge potentielle',fmt(S(L,p=>p.stock*(p.pv-p.pa))))],
+sinv:()=>{const L=D.produits;return{cards:RV.sCards(L),cols:[['Réf.','t'],['Produit','t'],['Catégorie','t'],['Dépôt','t'],['Stock','q',1],["Prix d'achat",'n'],["Valeur d'achat",'n',1],['Prix de vente','n'],['Valeur de vente','n',1]],rows:L.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(p=>[p.ref||'',p.name,p.cat||'—',p.depot||'',p.stock,p.pa,p.stock*p.pa,p.pv,p.stock*p.pv])}},
+salert:()=>{const L=D.produits.filter(p=>p.stock<=(+p.seuil||0));return{cards:[cd('Produits en alerte',L.length,L.length>0),cd('En rupture',L.filter(p=>p.stock<=0).length,L.some(p=>p.stock<=0))],cols:[['Réf.','t'],['Produit','t'],['Dépôt','t'],['Stock','q'],['Seuil','q'],['À commander (suggestion)','q',1],['État','g']],rows:L.map(p=>[p.ref||'',p.name,p.depot||'',p.stock,+p.seuil||0,Math.max(0,(+p.seuil||0)*2-p.stock),stockState(p)]).sort((a,b)=>a[3]-b[3])}},
+sdep:()=>{const g=grp(D.produits,p=>p.depot||'Sans dépôt');return{cards:RV.sCards(D.produits),cols:[['Dépôt','t'],['Nb produits','q',1],['Quantité totale','q',1],["Valeur d'achat",'n',1],['Valeur de vente','n',1]],rows:Object.keys(g).map(k=>[k,g[k].length,S(g[k],p=>p.stock),S(g[k],p=>p.stock*p.pa),S(g[k],p=>p.stock*p.pv)])}},
+scat:()=>{const g=grp(D.produits,p=>p.cat||'Sans catégorie');return{cards:RV.sCards(D.produits),cols:[['Catégorie','t'],['Nb produits','q',1],['Quantité totale','q',1],["Valeur d'achat",'n',1],['Valeur de vente','n',1]],rows:Object.keys(g).map(k=>[k,g[k].length,S(g[k],p=>p.stock),S(g[k],p=>p.stock*p.pa),S(g[k],p=>p.stock*p.pv)]).sort((a,b)=>b[3]-a[3])}},
+sdorm:()=>{const sold=new Set();FT().forEach(d=>(d.lines||[]).forEach(l=>sold.add(l.pid)));const L=D.produits.filter(p=>p.stock>0&&!sold.has(p.id));return{cards:[cd('Produits sans vente',L.length,L.length>0),cd('Capital immobilisé',fmt(S(L,p=>p.stock*p.pa)))],cols:[['Réf.','t'],['Produit','t'],['Dépôt','t'],['Stock','q',1],["Valeur d'achat",'n',1]],rows:L.map(p=>[p.ref||'',p.name,p.depot||'',p.stock,p.stock*p.pa]).sort((a,b)=>b[4]-a[4]),note:'Produits en stock sans aucune vente sur la période choisie.'}},
+srot:()=>{const R=lineRows(FT(),(l)=>l.pid),q={};R.forEach(o=>q[o.k]=o.qty);return{cards:[cd('Produits vendus',R.length)],cols:[['Produit','t'],['Stock','q',1],['Qté vendue','q',1],['Rotation (vendu / stock)','q']],rows:D.produits.map(p=>[p.name,p.stock,q[p.id]||0,p.stock>0?(q[p.id]||0)/p.stock:(q[p.id]?99:0)]).sort((a,b)=>b[2]-a[2])}},
+smarge:()=>({cards:[cd('Produits',D.produits.length)],cols:[['Produit','t'],['Catégorie','t'],["Prix d'achat",'n'],['Prix de vente','n'],['Marge unitaire','n'],['Marge %','p']],rows:D.produits.map(p=>[p.name,p.cat||'—',p.pa,p.pv,p.pv-p.pa,pct(p.pv-p.pa,p.pv)]).sort((a,b)=>b[5]-a[5])}),
+/* ---- Finances ---- */
+fres:()=>{const L=FT(),ca=S(L,d=>d.total),co=S(L,icost),mb=ca-co,ch=S(D.charges.filter(c=>inR(c.date)),c=>c.amount),rn=mb-ch;return{cards:[cd("Chiffre d'affaires",fmt(ca)),cd('Marge brute',fmt(mb)),cd('Charges',fmt(ch)),cd('Résultat net',fmt(rn),rn<0)],cols:[['Poste','t'],['Montant','n'],['% du CA','p']],rows:[['Ventes (chiffre d\'affaires)',ca,100],['Coût des marchandises vendues',-co,pct(co,ca)],['Marge brute',mb,pct(mb,ca)],['Charges et dépenses',-ch,pct(ch,ca)],['Résultat net',rn,pct(rn,ca)]],note:"Résultat simplifié : le coût des marchandises utilise le prix d'achat actuel des produits."}},
+fcaisse:()=>{const E=[];FT().forEach(d=>{if(d.paid>0)E.push({d:d.date,t:'Vente encaissée',l:d.num+' — '+(d.tname||'Client comptoir'),i:d.paid,o:0})});
+  D.argent.filter(x=>inR(x.date)).forEach(x=>E.push({d:x.date,t:'Dépôt d\'argent',l:(x.who||'')+(x.note?' — '+x.note:''),i:x.sens==='Entrée'?x.amount:0,o:x.sens==='Sortie'?x.amount:0}));
+  D.charges.filter(c=>inR(c.date)).forEach(c=>E.push({d:c.date,t:'Charge',l:c.cat+' — '+c.label,i:0,o:c.amount}));
+  D.reappro.filter(r=>inR(r.date)&&r.paid>0).forEach(r=>E.push({d:r.date,t:'Paiement fournisseur',l:r.num+' — '+tiers('fournisseur',r.fid),i:0,o:r.paid}));
+  E.sort((a,b)=>a.d.localeCompare(b.d));let c=0;const rows=E.map(e=>{c+=e.i-e.o;return[e.d,e.t,e.l,e.i,e.o,c]});const I=S(E,e=>e.i),O=S(E,e=>e.o);
+  return{cards:[cd('Entrées',fmt(I)),cd('Sorties',fmt(O)),cd('Solde de la période',fmt(I-O),I-O<0),cd('Solde de caisse actuel',fmt(caisse()))],cols:[['Date','d'],['Type','t'],['Libellé','t'],['Entrée','n',1],['Sortie','n',1],['Cumul période','n']],rows,note:'Les règlements ultérieurs de factures sont rattachés à la date de la facture.'}},
+fchcat:()=>{const L=D.charges.filter(c=>inR(c.date)),g=grp(L,c=>c.cat||'Autres'),T=S(L,c=>c.amount);return{cards:[cd('Total charges',fmt(T)),cd('Nombre',L.length)],cols:[['Catégorie','t'],['Nb','q',1],['Montant','n',1],['Part','p']],rows:Object.keys(g).map(k=>[k,g[k].length,S(g[k],c=>c.amount),pct(S(g[k],c=>c.amount),T)]).sort((a,b)=>b[2]-a[2])}},
+fchmois:()=>{const L=D.charges.filter(c=>inR(c.date)),g=grp(L,c=>c.date.slice(0,7));return{cards:[cd('Total charges',fmt(S(L,c=>c.amount)))],cols:[['Mois','t'],['Nb','q',1],['Montant','n',1]],rows:Object.keys(g).sort().reverse().map(k=>[mlabel(k),g[k].length,S(g[k],c=>c.amount)])}},
+fchlist:()=>{const L=D.charges.filter(c=>inR(c.date));return{cards:[cd('Total charges',fmt(S(L,c=>c.amount)))],cols:[['Date','d'],['Catégorie','t'],['Libellé','t'],['Mode','t'],['Montant','n',1]],rows:L.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(c=>[c.date,c.cat,c.label,c.mode||'',c.amount])}},
+fargent:()=>{const L=D.argent.filter(x=>inR(x.date));return{cards:[cd('Entrées',fmt(sumS(L,'Entrée'))),cd('Sorties',fmt(sumS(L,'Sortie'))),cd('Solde',fmt(sumS(L,'Entrée')-sumS(L,'Sortie')))],cols:[['Date','d'],['Sens','t'],['Déposant / Compte','t'],['Mode','t'],['Note','t'],['Montant','n',1]],rows:L.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>[x.date,x.sens,x.who||'',x.mode||'',x.note||'',x.amount])}},
+fsit:()=>{const cl=D.clients.reduce((a,c)=>a+Math.max(0,solde('client',c.id)),0)+D.docs.facture.filter(d=>!d.tid).reduce((a,d)=>a+reste(d),0),det=D.fournisseurs.reduce((a,f)=>a+Math.max(0,solde('fournisseur',f.id)),0),st=S(D.produits,p=>p.stock*p.pa),ca=caisse(),net=ca+cl+st-det;
+  return{cards:[cd('Position nette',fmt(net),net<0)],cols:[['Élément','t'],['Montant','n']],rows:[['Solde de caisse',ca],['Créances clients (impayés)',cl],["Valeur du stock (prix d'achat)",st],['Dettes fournisseurs',-det],['Position nette (caisse + créances + stock − dettes)',net]]}},
+fsyn:()=>{const V=grp(FT(),d=>d.date.slice(0,7)),A=grp(D.reappro.filter(r=>inR(r.date)),r=>r.date.slice(0,7)),C=grp(D.charges.filter(c=>inR(c.date)),c=>c.date.slice(0,7)),ms=[...new Set([...Object.keys(V),...Object.keys(A),...Object.keys(C)])].sort().reverse();
+  const rows=ms.map(m=>{const v=S(V[m]||[],d=>d.total),mb=S(V[m]||[],imarge),ch=S(C[m]||[],c=>c.amount);return[mlabel(m),v,S(A[m]||[],r=>r.total),ch,mb,mb-ch]});
+  return{cards:[cd('Ventes',fmt(S(rows,r=>r[1]))),cd('Achats',fmt(S(rows,r=>r[2]))),cd('Charges',fmt(S(rows,r=>r[3]))),cd('Résultat',fmt(S(rows,r=>r[5])),S(rows,r=>r[5])<0)],cols:[['Mois','t'],['Ventes','n',1],['Achats','n',1],['Charges','n',1],['Marge brute','n',1],['Résultat','n',1]],rows}},
+/* ---- Documents ---- */
+dl:type=>()=>{const L=D.docs[type].filter(d=>inR(d.date)),stt=d=>type==='facture'?stat(d):type==='bc'?(d.recu?['Reçu','t-ok']:['En attente','t-w']):(d.conv?['Converti','t-ok']:['Ouvert','t-n']);return{cards:[cd(DT[type].t,L.length),cd('Montant total',fmt(S(L,d=>d.total)))],cols:[['Date','d'],['N°','t'],[DT[type].who==='client'?'Client':'Fournisseur','t'],['Lignes','q'],['Remise','n',1],['Total','n',1],['Statut','g']],rows:L.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(d=>[d.date,d.num,d.tname||'—',(d.lines||[]).length,d.remise||0,d.total,stt(d)])}},
+drel:()=>{const L=[...D.docs.devis.map(d=>['Devis',d]),...D.docs.proforma.map(d=>['Proforma',d])].filter(x=>!x[1].conv&&inR(x[1].date));return{cards:[cd('À relancer',L.length,L.length>0),cd('Montant potentiel',fmt(S(L,x=>x[1].total)))],cols:[['Date','d'],['Type','t'],['N°','t'],['Client','t'],['Total','n',1],['Âge (j)','q']],rows:L.map(x=>[x[1].date,x[0],x[1].num,x[1].tname||'Client comptoir',x[1].total,dd(x[1].date,today())]).sort((a,b)=>b[5]-a[5]),note:'Devis et proforma pas encore transformés en facture.'}},
+dbl:()=>{const L=D.docs.bl.filter(d=>!d.conv&&inR(d.date));return{cards:[cd('BL non facturés',L.length,L.length>0),cd('Montant',fmt(S(L,d=>d.total)))],cols:[['Date','d'],['N°','t'],['Client','t'],['Total','n',1],['Âge (j)','q']],rows:L.map(d=>[d.date,d.num,d.tname||'Client comptoir',d.total,dd(d.date,today())]).sort((a,b)=>b[4]-a[4])}},
+dsyn:()=>{const rows=Object.keys(DT).map(t=>{const L=D.docs[t].filter(d=>inR(d.date));return[DT[t].t,L.length,S(L,d=>d.total),L.filter(d=>t==='facture'?d.paid>=d.total:t==='bc'?d.recu:d.conv).length]});return{cards:[cd('Documents',S(rows,r=>r[1]))],cols:[['Type de document','t'],['Nombre','q',1],['Montant total','n',1],['Traités (payés / convertis / reçus)','q',1]],rows}}
+};
+
+const REP={
+ rap_ventes:{t:'Rapports — Ventes',r:[['vj','Par jour',RV.vj],['vm','Par mois',RV.vm],['vc','Par client',RV.vc],['vp','Par produit',RV.vp],['vcat','Par catégorie',RV.vcat],['vv','Par vendeur',RV.vv],['vmode','Par mode de paiement',RV.vmode],['vmarge','Marge par facture',RV.vmarge],['vlist','Liste des factures',RV.vlist]]},
+ rap_clients:{t:'Rapports — Clients',r:[['cs','Soldes clients',RV.cs,1],['ci','Factures impayées',RV.ci],['cage','Balance âgée',RV.cage,1],['ctop','Meilleurs clients',RV.ctop],['creg','Règlements reçus',RV.creg],['cinact','Clients inactifs',RV.cinact,1]]},
+ rap_achats:{t:'Rapports — Achats',r:[['af','Par fournisseur',RV.af],['ad','Dettes fournisseurs',RV.ad,1],['aj','Journal des approvisionnements',RV.aj],['ap','Par produit',RV.ap],['areg','Règlements effectués',RV.areg],['abc','Bons de commande',RV.abc]]},
+ rap_stock:{t:'Rapports — Stock',r:[['sinv','Inventaire valorisé',RV.sinv,1],['salert','Alertes et ruptures',RV.salert,1],['sdep','Par dépôt',RV.sdep,1],['scat','Par catégorie',RV.scat,1],['sdorm','Produits dormants',RV.sdorm],['srot','Rotation',RV.srot],['smarge','Marges des produits',RV.smarge,1]]},
+ rap_finance:{t:'Rapports — Finances',r:[['fres','Compte de résultat',RV.fres],['fsyn','Synthèse mensuelle',RV.fsyn],['fcaisse','Journal de caisse',RV.fcaisse],['fsit','Situation financière',RV.fsit,1],['fchcat','Charges par catégorie',RV.fchcat],['fchmois','Charges par mois',RV.fchmois],['fchlist','Liste des charges',RV.fchlist],['fargent','Dépôts d\'argent',RV.fargent]]},
+ rap_docs:{t:'Rapports — Documents',r:[['dsyn','Synthèse',RV.dsyn],['dfac','Factures',RV.dl('facture')],['dpro','Proforma',RV.dl('proforma')],['ddev','Devis',RV.dl('devis')],['dbc','Bons de commande',RV.dl('bc')],['dbl2','Bons de livraison',RV.dl('bl')],['drel','Devis à relancer',RV.drel],['dbl','BL non facturés',RV.dbl]]}
+};
+
+const rNum=t=>t==='n'||t==='q'||t==='p';
+function rpFmt(v,t){if(t==='n')return fmt(v);if(t==='q')return typeof v==='number'?v.toLocaleString('fr-FR',{maximumFractionDigits:2}):esc(v);if(t==='d')return fd(v);if(t==='p')return (+v).toLocaleString('fr-FR',{maximumFractionDigits:1})+' %';if(t==='g')return`<span class="tag ${v[1]}">${esc(v[0])}</span>`;return esc(v)}
+function rpParts(R){const c=R.cols,rows=R.rows.map(r=>`<tr>${r.map((v,i)=>`<td class="${rNum(c[i][1])?'r':''}">${rpFmt(v,c[i][1])}</td>`).join('')}</tr>`);
+  const foot=c.some(x=>x[2])?`<tr>${c.map((x,i)=>i===0?`<td>Total (${R.rows.length})</td>`:`<td class="${rNum(x[1])?'r':''}">${x[2]?rpFmt(S(R.rows,r=>r[i]),x[1]):''}</td>`).join('')}</tr>`:'';
+  return{heads:c.map(x=>(rNum(x[1])?'>':'')+x[0]),rows,foot}}
+let RPC=null;
+function rpBody(key){
+  const C=REP[key];let k=RPS['r_'+key];if(!C.r.some(x=>x[0]===k))k=RPS['r_'+key]=C.r[0][0];
+  const x=C.r.find(y=>y[0]===k),R=x[2]();R.title=x[1];R.cat=C.t;R.nodate=!!x[3];RPC=R;
+  const pre=[['today',"Aujourd'hui"],['week','Semaine'],['month','Mois'],['last','Mois dernier'],['year','Année'],['all','Tout']],P=rpParts(R);
+  return`<div class="rtabs">${C.r.map(y=>`<button class="btn ${y[0]===k?'pri':''}" onclick="rpSel('${key}','${y[0]}')">${y[1]}</button>`).join('')}</div>
+  <div class="rbar">${R.nodate?'<b>Situation au '+fd(today())+'</b>':pre.map(p=>`<button class="btn sm ${RPS.pre===p[0]?'gold':''}" onclick="rpPre('${p[0]}')">${p[1]}</button>`).join('')+` Du <input type="date" value="${RPS.from}" onchange="rpCus('from',this.value)"> au <input type="date" value="${RPS.to}" onchange="rpCus('to',this.value)">`}<span style="flex:1"></span><button class="btn sm" onclick="rpCsv()">⬇ Excel (CSV)</button><button class="btn sm" onclick="rpPrint(1)">PDF</button><button class="btn sm pri" onclick="rpPrint()">🖨 Imprimer</button></div>
+  <div class="cards">${R.cards.map(c=>`<div class="card ${c[2]?'al':''}"><small>${c[0]}</small><b>${c[1]}</b></div>`).join('')}</div>
+  ${tbl(P.heads,P.rows,P.foot)}${R.note?`<p style="font-size:12px;color:var(--mu)">${R.note}</p>`:''}`}
+const rpSel=(key,k)=>{RPS['r_'+key]=k;res()};
+function rpPre(p){RPS.pre=p;const r=rpRange(p);RPS.from=r[0];RPS.to=r[1];res()}
+function rpCus(k,v){RPS[k]=v;RPS.pre='custom';res()}
+function rpPeriod(R){return R.nodate?'Situation au '+fd(today()):'Période : '+(RPS.from?fd(RPS.from):'début')+' au '+fd(RPS.to||today())}
+function rpPrint(pdf){const R=RPC;if(!R)return;const P=rpParts(R),cp=D.company;
+  $('#pa').innerHTML=`<div class="rp"><div class="rph"><div><b style="font-size:14px">${esc(cp.name)}</b><br>${esc(cp.addr1||'')} ${esc(cp.tel?'· Tél : '+cp.tel:'')}</div><div style="text-align:right"><h2>${esc(R.title)}</h2>${esc(R.cat)}<br>${rpPeriod(R)}</div></div>
+  <div class="rpc">${R.cards.map(c=>`<div>${c[0]}<br><b>${c[1]}</b></div>`).join('')}</div>
+  <table class="rpt"><thead><tr>${P.heads.map(h=>`<th class="${h[0]==='>'?'r':''}">${h.replace(/^>/,'')}</th>`).join('')}</tr></thead><tbody>${P.rows.join('')}</tbody>${P.foot?`<tfoot>${P.foot}</tfoot>`:''}</table>
+  ${R.note?`<p class="rpn">${R.note}</p>`:''}<p class="rpn">Édité le ${fd(today())} par ${esc(USER.name)}</p></div>`;
+  $('#pgs').textContent='@page{size:A4 '+(R.cols.length>6?'landscape':'portrait')+';margin:8mm}';
+  const t=document.title;document.title=R.title+' - '+cp.name;window.onafterprint=()=>{document.title=t};
+  if(pdf)toast("Dans la fenêtre qui s'ouvre, choisissez « Enregistrer au format PDF » comme imprimante.",5000);
+  setTimeout(()=>{try{window.print()}catch(e){toast('Impression indisponible ici : ouvrez le fichier dans votre navigateur')}},pdf?600:120)}
+function rpCsv(){const R=RPC;if(!R)return;const q=v=>'"'+String(v).replace(/"/g,'""')+'"',cv=(v,t)=>t==='g'?v[0]:t==='d'?fd(v):t==='n'||t==='q'||t==='p'?(typeof v==='number'?Math.round(v*100)/100:v):v;
+  const lines=[R.cols.map(c=>q(c[0])).join(';'),...R.rows.map(r=>r.map((v,i)=>q(cv(v,R.cols[i][1]))).join(';'))];
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));a.download=(R.cat+' '+R.title+' '+today()).replace(/[^\w\- ]+/g,'').replace(/\s+/g,'_')+'.csv';a.click();toast('Fichier exporté')}
+Object.keys(REP).forEach(k=>{VIEW[k]=()=>({h:`<div class="ph"><h2>${REP[k].t}<small>${esc(D.company.name)}</small></h2></div>`,b:()=>rpBody(k)})});
+
+</script>
+</body>
+</html>
