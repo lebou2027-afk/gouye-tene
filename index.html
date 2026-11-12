@@ -230,6 +230,31 @@ label input,label select,label textarea,.addl input,.lt input{font-size:15.5px;f
 .stctl .hint{font-size:13px;color:var(--mu);font-weight:600}
 .stctl input[type=range]{padding:0;border:0}
 </style>
+<style id="onerow">
+/* LIGNES CONTINUES : une seule ligne par enregistrement, boutons horizontaux */
+@media screen{
+.box,.pcart,#fl,#rlines,#rtabs{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.box table,.lt{width:100%}
+.box th,.box td,.lt th,.lt td{white-space:nowrap!important;vertical-align:middle}
+.box td *,.lt td *{white-space:nowrap}
+.box .act,.lt .act,.ta .act,td .act{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center;gap:4px;max-width:none!important;white-space:nowrap!important;width:max-content}
+.box .act .btn,.lt .act .btn,td .act .btn,td>.btn{display:inline-flex;align-items:center;flex:0 0 auto;white-space:nowrap!important;width:auto}
+.ta td:last-child,.ta th:last-child{position:static!important;box-shadow:none!important;right:auto!important}
+.box .act .btn.sm{padding:3px 6px}
+.nmw{flex-wrap:nowrap;white-space:nowrap}
+.tag{white-space:nowrap}
+}
+</style>
+<style id="v2">
+.ph input.big{flex:1 1 100%;order:10;font-size:17px;padding:11px 12px;border:2px solid var(--y);background:#fffdf3}
+.srch{position:relative;margin:8px 0}
+.srch input{display:block;width:100%;padding:10px 12px;border:2px solid var(--y);border-radius:8px;background:#fffdf3;font-weight:700;font-size:16px;color:#000}
+.srch .gsr{position:absolute;top:calc(100% + 3px);left:0;right:0;background:#fff;color:#000;border:2px solid var(--g);border-radius:10px;max-height:55vh;overflow:auto;box-shadow:0 8px 24px #0005;z-index:60}
+.gi{display:flex;gap:10px;align-items:center;padding:6px 10px;cursor:pointer;border-bottom:1px solid #e3e9e4}
+.gi:hover{background:var(--gl)}.gi .t{flex:1;min-width:0}.gi .t b{display:block}.gi .t small{color:var(--mu);font-weight:600}
+.pickbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.pickbar input[type=search]{flex:1;min-width:160px;padding:8px 10px;border:1.5px solid #0b4a2b;border-radius:8px;font-weight:700}
+</style>
 <style id="pgs"></style>
 </head>
 <body>
@@ -255,7 +280,7 @@ label input,label select,label textarea,.addl input,.lt input{font-size:15.5px;f
     <header>
       <button class="burger" onclick="$('#side').classList.toggle('open')">☰</button>
       <div class="ttl" id="htitle"></div>
-      <div class="who" id="hwho"></div>
+<div class="who" id="hwho"></div>
       <button class="btn sm" onclick="logout()">🏪 Magasin</button>
     </header>
     <main id="main"></main>
@@ -330,7 +355,7 @@ const PGP=PAGES.filter(p=>p[0]!=='users'&&p[0]!=='params');
 function defPerms(role){const o={};(ACC[role]||[]).forEach(k=>{if(k!=='users'&&k!=='params')o[k]=k==='dash'?{v:1}:{v:1,a:1,m:1,s:1,o:1}});return o}
 const permsOf=u=>u.perms||defPerms(u.role);
 function can(p,a){if(!USER)return false;if(USER.role==='admin')return true;if(p==='users'||p==='params')return false;const x=permsOf(USER)[p];return!!(x&&x[a])}
-function go(p){if(!can(p,'v'))return toast('Accès non autorisé');page=p;Q='';$('#side').classList.remove('open');render()}
+function go(p){if(!can(p,'v'))return toast('Accès non autorisé');if(p!==page)F=null;page=p;Q='';QD='';$('#side').classList.remove('open');render()}
 function render(keep){
   const st=G.stores.find(s=>s.id===SID);
   $('#htitle').textContent=st.icon+' '+st.name;if(!can(page,'v')){const v=PAGES.find(p=>can(p[0],'v'));if(v)page=v[0]}
@@ -344,7 +369,7 @@ function render(keep){
 function res(){$('#res').innerHTML=cur.b()}
 function sq(v){Q=v;res()}
 const match=(q,...f)=>!q||f.some(x=>String(x||'').toLowerCase().includes(q.toLowerCase()));
-function hd(title,sub,addFn,addLabel,extra){return`<div class="ph"><h2>${title}${sub?`<small>${sub}</small>`:''}</h2>${extra||''}<input type="search" placeholder="Rechercher…" value="${esc(Q)}" oninput="sq(this.value)">${addFn&&can(page,'a')?`<button class="btn gold" onclick="${addFn}">+ ${addLabel||'Ajouter'}</button>`:''}</div>`}
+function hd(title,sub,addFn,addLabel,extra){return`<div class="ph"><h2>${title}${sub?`<small>${sub}</small>`:''}</h2>${extra||''}<input type="search" class="${page==='vente'||DT[page]?'big':''}" placeholder="${({vente:'🔍 Rechercher un produit (nom ou référence)…',produits:'Rechercher un produit…',clients:'Rechercher un client…',fournisseurs:'Rechercher un fournisseur…'})[page]||(DT[page]?'🔍 Rechercher un produit (nom ou référence)…':'Rechercher…')}" value="${esc(Q)}" oninput="sq(this.value)">${addFn&&can(page,'a')?`<button class="btn gold" onclick="${addFn}">+ ${addLabel||'Ajouter'}</button>`:''}</div>`}
 function tbl(heads,rows,foot){if(!rows.length)return'<div class="box"><div class="empty">Aucune donnée pour le moment.</div></div>';return`<div class="box"><table class="${heads.includes('Actions')?'ta':''}"><thead><tr>${heads.map(h=>`<th class="${h[0]==='>'?'r':''}">${h.replace(/^>/,'')}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody>${foot?`<tfoot>${foot}</tfoot>`:''}</table></div>`}
 
 /* ---------- modale ---------- */
@@ -398,8 +423,11 @@ function saveForm(c,id){if(!can(c,id?'m':'a'))return toast('Droit insuffisant');
   save();closeM();render();toast('Enregistré');
 }
 async function delItem(c,id){if(!can(c,'s'))return toast('Droit insuffisant');
+  if(!D[c].find(x=>x.id===id))return;
   if(c==='depots'){const d=D.depots.find(x=>x.id===id);if(D.produits.some(p=>p.depot===d.name))return toast('Ce dépôt contient des produits');if(D.depots.length===1)return toast('Gardez au moins un dépôt')}
   let extra='';
+  if(c==='fournisseurs'){const L=D.reappro.filter(r=>r.fid===id),du=L.reduce((a,r)=>a+r.total-(r.paid||0),0);if(L.length)extra='\nCe fournisseur a '+L.length+' approvisionnement(s)'+(du>0?' (reste à payer : '+fmt(du)+')':'')+' : ils resteront enregistrés mais ne seront plus liés à lui.'}
+  if(c==='produits'){const p=D.produits.find(x=>x.id===id);if(p.stock>0)extra='\nIl reste '+p.stock+' en stock : cette quantité sera perdue du stock.'}
   if(c==='clients'){const L=D.docs.facture.filter(d=>d.tid===id),du=L.reduce((a,d)=>a+d.total-(d.paid||0),0);if(L.length)extra='\nCe client a '+L.length+' facture(s)'+(du>0?' (reste dû : '+fmt(du)+')':'')+' : elles resteront enregistrées mais ne seront plus liées à lui.'}
   if(!await cfm('Supprimer définitivement cet élément ?'+extra,'Supprimer'))return;
   D[c]=D[c].filter(x=>x.id!==id);save();render(1);toast('Supprimé');
@@ -409,7 +437,7 @@ const ab=(c,id,extra)=>`<div class="act">${extra||''}${can(c,'m')?`<button class
 /* ---------- confirmation (remplace confirm() bloqué dans certains navigateurs) ---------- */
 function cfm(msg,ok){return new Promise(res=>{let r=document.getElementById('croot');if(!r){r=document.createElement('div');r.id='croot';document.body.appendChild(r)}
   r.innerHTML=`<div class="ov" style="z-index:90;align-items:center"><div class="md" style="max-width:420px"><h3>Confirmation</h3><p style="font-size:15px;line-height:1.5">${esc(msg).split(String.fromCharCode(10)).join('<br>')}</p><div class="mb"><button class="btn" id="cno">Annuler</button><button class="btn pri" id="cyes">${esc(ok||'Confirmer')}</button></div></div></div>`;
-  const end=v=>{r.innerHTML='';res(v)};document.getElementById('cno').onclick=()=>end(false);document.getElementById('cyes').onclick=()=>end(true);document.getElementById('cyes').focus()})}
+  const kd=e=>{if(e.key==='Escape')end(false)};document.addEventListener('keydown',kd);const end=v=>{document.removeEventListener('keydown',kd);r.innerHTML='';res(v)};document.getElementById('cno').onclick=()=>end(false);document.getElementById('cyes').onclick=()=>end(true);document.getElementById('cyes').focus()})}
 
 /* ---------- photos produits ---------- */
 let PIMG='',POSIMG=true;
@@ -424,6 +452,85 @@ function zoomImg(id){const p=pOf(id);if(!p||!p.img)return;openM(`<div style="tex
 function pimgBlock(){return`<div style="grid-column:1/-1;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><div id="pimgp" class="pbox">${PIMG?`<img src="${PIMG}">`:'Aucune photo'}</div><div class="act"><label class="btn" style="margin:0;color:var(--tx);font-size:14px;font-weight:400">📷 Photo du produit<input type="file" accept="image/*" onchange="impPImg(this)" style="display:none"></label><button class="btn dg" id="pimgx" type="button" style="${PIMG?'':'display:none'}" onclick="PIMG='';pimgDraw()">Retirer</button></div></div>`}
 function pimgDraw(){const e=$('#pimgp');if(e)e.innerHTML=PIMG?`<img src="${PIMG}">`:'Aucune photo';const b=$('#pimgx');if(b)b.style.display=PIMG?'':'none'}
 function impPImg(i){const f=i.files[0];if(f)imgResize(f,u=>{PIMG=u;pimgDraw()})}
+
+
+/* ---------- fenêtres superposées (au-dessus d'une fenêtre déjà ouverte) ---------- */
+function ovl(id,z,h,w){let r=document.getElementById(id);if(!r){r=document.createElement('div');r.id=id;document.body.appendChild(r)}r.innerHTML=`<div class="ov" style="z-index:${z}"><div class="md" style="max-width:${w||560}px">${h}</div></div>`}
+const openM2=(h,w)=>ovl('m2root',70,h,w),openM3=(h,w)=>ovl('m3root',80,h,w);
+function closeM2(){const r=document.getElementById('m2root');if(r)r.innerHTML=''}
+function closeM3(){const r=document.getElementById('m3root');if(r)r.innerHTML=''}
+
+/* ---------- ajout rapide client / fournisseur / produit ---------- */
+function quickAdd(c,cb){
+  if(!can(c,'a'))return toast('Droit insuffisant');
+  const sc=SCH[c];window._qcb=cb;PIMG='';
+  let h=`<h3>+ Nouveau ${sc.s.toLowerCase()}</h3><div class="grid2">${c==='produits'?pimgBlock():''}`;
+  sc.f.forEach(([k,l,t,opts])=>{
+    const v=t==='date'?today():(t==='number'?0:'');
+    const inp=t==='select'?`<select id="q_${k}">${(typeof opts==='function'?opts():opts).map(x=>`<option>${esc(x)}</option>`).join('')}</select>`:`<input id="q_${k}" type="${t==='text'||!t?'text':t}" value="${esc(v)}">`;
+    h+=`<label class="${k==='note'?'full':''}">${l}${inp}</label>`});
+  h+=`</div><div class="mb"><button class="btn" onclick="closeM3()">Annuler</button><button class="btn pri" onclick="quickSave('${c}')">Enregistrer</button></div>`;
+  openM3(h,620);setTimeout(()=>{const e=document.getElementById('q_name');if(e)e.focus()},60)}
+async function quickSave(c){
+  if(!can(c,'a'))return toast('Droit insuffisant');
+  const sc=SCH[c],o={};
+  for(const f of sc.f){const e=document.getElementById('q_'+f[0]);let v=e.value.trim();if(f[2]==='number')v=+v||0;o[f[0]]=v}
+  if(c==='produits')o.img=PIMG;
+  for(const k of sc.req)if(!o[k])return toast('Champ obligatoire manquant');
+  const dup=D[c].find(x=>String(x.name||'').trim().toLowerCase()===o.name.toLowerCase());
+  if(dup&&!await cfm('« '+dup.name+' » existe déjà. Créer quand même un deuxième ?','Créer'))return;
+  const n=Object.assign({id:uid()},o);D[c].push(n);save();closeM3();toast(sc.s+' ajouté');
+  const cb=window._qcb;if(cb)cb(n)}
+
+/* ---------- champ client/fournisseur avec recherche + bouton « Nouveau » ---------- */
+function whoOpts(list,cur,q){return list.filter(w=>w.id===cur||match(q,w.name,w.tel)).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(w=>`<option value="${w.id}" ${w.id===cur?'selected':''}>${esc(w.name)}</option>`).join('')}
+function whoField(id,c,cur,empty,label,addFn,onch){
+  const l=label.toLowerCase();
+  return`<div class="srch" style="margin:0"><label>${label}<input type="search" id="${id}q" placeholder="🔍 Rechercher ${l} (nom ou téléphone)…" autocomplete="off" oninput="whoFind('${id}',this.value)" onfocus="whoFind('${id}',this.value)" onkeydown="whoKey(event,'${id}')"></label><div id="${id}r" class="gsr hide"></div></div><label style="margin-top:6px">${label} sélectionné<select id="${id}" data-c="${c}" data-e="${esc(empty)}" ${onch?`onchange="${onch}"`:''}><option value="">${esc(empty)}</option>${whoOpts(D[c],cur,'')}</select></label>${addFn&&can(c,'a')?`<button type="button" class="btn gold sm" style="margin-top:5px" onclick="${addFn}">+ Nouveau ${l}</button>`:''}`}
+function whoFind(id,q){const s=document.getElementById(id),r=document.getElementById(id+'r');if(!s||!r)return;q=(q||'').trim();
+  const c=s.dataset.c,kind=c==='clients'?'client':'fournisseur',L=D[c].filter(w=>match(q,w.name,w.tel,w.addr)).slice().sort((a,b)=>a.name.localeCompare(b.name));
+  r.innerHTML=(L.length?L.slice(0,8).map(w=>`<div class="gi" onclick="whoSet('${id}','${w.id}')"><div class="th s ph">${esc((w.name||'?').trim().charAt(0).toUpperCase())}</div><div class="t"><b>${esc(w.name)}</b><small>${esc(w.tel||'—')} · Solde : ${fmt(solde(kind,w.id))}</small></div></div>`).join('')+(L.length>8?`<div class="empty" style="padding:6px">… ${L.length-8} autre(s) : précisez la recherche</div>`:''):`<div class="empty">Aucun ${kind} trouvé.</div>`);
+  r.classList.remove('hide')}
+function whoKey(e,id){if(e.key==='Escape')document.getElementById(id+'r').classList.add('hide');else if(e.key==='Enter'){const f=document.querySelector('#'+id+'r .gi');if(f)f.click()}}
+document.addEventListener('click',e=>{document.querySelectorAll('.srch .gsr').forEach(r=>{if(!r.parentNode.contains(e.target))r.classList.add('hide')})});
+function whoFilter(id,q){const s=document.getElementById(id);if(!s)return;const cur=s.value;s.innerHTML=`<option value="">${esc(s.dataset.e)}</option>`+whoOpts(D[s.dataset.c],cur,q);s.value=cur}
+function whoSet(id,val){const s=document.getElementById(id);if(!s)return;const q=document.getElementById(id+'q');if(q)q.value='';const rr=document.getElementById(id+'r');if(rr)rr.classList.add('hide');s.innerHTML=`<option value="">${esc(s.dataset.e)}</option>`+whoOpts(D[s.dataset.c],val,'');s.value=val;s.dispatchEvent(new Event('change'))}
+function refreshDl(){const a=$('#plist'),b=$('#dlist');if(a)a.innerHTML=D.produits.map(p=>`<option value="${esc(p.name)}">${esc(p.ref)}</option>`).join('');if(b)b.innerHTML=D.produits.map(p=>`<option value="${esc(p.name)}">${esc(p.ref)} — stock ${p.stock}</option>`).join('')}
+/* raccourcis par écran */
+function qClientPOS(){quickAdd('clients',c=>{POS.tid=c.id;drawCart()})}
+function qProdPOS(){quickAdd('produits',p=>{res();padd(p.id)})}
+function fpsFind(q){const r=$('#fpsr');q=(q||'').trim();if(!q){r.classList.add('hide');return}
+  const L=D.produits.filter(p=>match(q,p.name,p.ref,p.cat)).slice(0,8);
+  r.innerHTML=L.length?L.map(p=>`<div class="gi" onclick="fpsAdd('${p.id}')">${thumb(p,'s')}<div class="t"><b>${esc(p.name)}</b><small>${esc(p.ref||'')} · Stock ${p.stock} · ${fmt(F.type==='bc'?p.pa:p.pv)}</small></div></div>`).join(''):'<div class="empty">Aucun produit. Utilisez « + Nouveau produit ».</div>';r.classList.remove('hide')}
+function fpsAdd(id){PK={mode:'doc',q:''};pkAdd(id);const i=$('#fps');i.value='';$('#fpsr').classList.add('hide');i.focus()}
+function qWho(){const c=DT[F.type].who==='client'?'clients':'fournisseurs';quickAdd(c,x=>whoSet('fwho',x.id))}
+function qProdDoc(){quickAdd('produits',p=>{res();docAdd(p.id)})}
+function qFourn(){quickAdd('fournisseurs',f=>whoSet('rf',f.id))}
+function qProdRea(){quickAdd('produits',p=>{refreshDl();$('#rp').value=p.name;rpick()})}
+
+/* ---------- catalogue photos (même format que la vente rapide) ---------- */
+let PK=null;
+function openPicker(mode){
+  PK={mode,q:''};
+  openM2(`<h3>🖼 Catalogue produits</h3><div class="pickbar"><input type="search" id="pkq" placeholder="Rechercher un produit…" autocomplete="off" oninput="PK.q=this.value;pkDraw()">${can('produits','a')?`<button class="btn gold" onclick="pkNew()">+ Nouveau produit</button>`:''}</div><p style="margin:0 0 6px;font-size:13px;color:var(--mu)">Touchez un produit pour l'ajouter (plusieurs fois = quantité +1).</p><div id="pkg" class="box" style="margin:0"></div><div class="mb"><button class="btn pri" onclick="closeM2()">Terminé</button></div>`,900);
+  pkDraw();setTimeout(()=>{const e=$('#pkq');if(e)e.focus()},60)}
+function pkPrice(p){return PK&&PK.mode==='doc'&&F.type!=='bc'?p.pv:p.pa}
+function pkDraw(){const e=$('#pkg');if(!e)return;
+  const L=D.produits.filter(p=>match(PK.q,p.name,p.ref,p.cat)).sort((a,b)=>a.name.localeCompare(b.name)).slice(0,80);
+  e.innerHTML=L.length?`<div class="pgrid">${L.map(p=>`<button class="pt ${p.stock<=0?'out':''}" onclick="pkAdd('${p.id}')">${tileImg(p)}<b>${esc(p.name)}</b><span>${esc(p.ref||'')} · Stock ${p.stock}</span><span class="pr">${fmt(pkPrice(p))}</span></button>`).join('')}</div>`:'<div class="empty">Aucun produit trouvé.</div>'}
+function pkAdd(id){const p=pOf(id);if(!p||!PK)return;
+  if(PK.mode==='doc'){const l=F.o.lines.find(x=>x.pid===id);if(l)l.qty++;else F.o.lines.push({pid:id,ref:p.ref,name:p.name,qty:1,price:+pkPrice(p)||0});drawLines()}
+  else{const l=RL.find(x=>x.pid===id);if(l)l.qty++;else RL.push({pid:id,name:p.name,qty:1,price:+p.pa||0});rdraw()}
+  toast('✓ '+p.name+' ajouté',1100)}
+function pkNew(){quickAdd('produits',p=>{refreshDl();pkAdd(p.id);pkDraw()})}
+
+/* ---------- fiche produit + vue vignettes (page Produits) ---------- */
+let PVIEW='table';
+function prodCard(id){const p=pOf(id);if(!p)return;const s=stockState(p);
+  openM(`<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">${p.img?`<img src="${p.img}" style="width:150px;height:150px;object-fit:cover;border-radius:10px;border:2px solid #0b4a2b">`:`<div class="th ph" style="width:150px;height:150px;font-size:56px">${esc((p.name||'?').trim().charAt(0).toUpperCase())}</div>`}<div style="flex:1;min-width:200px"><h3 style="margin:0 0 6px">${esc(p.name)}</h3><div>Réf. : ${esc(p.ref||'—')}</div><div>Dépôt : ${esc(p.depot||'—')}</div><div>Stock : <b>${p.stock}</b> <span class="tag ${s[1]}">${s[0]}</span></div><div>Prix de vente : <b>${fmt(p.pv)}</b></div><div>Prix d'achat : ${fmt(p.pa)}</div></div></div>
+  <div class="mb">${can('vente','a')&&can('vente','v')?`<button class="btn gold" onclick="closeM();go('vente');padd('${p.id}')">⚡ Ajouter à la vente</button>`:''}${can('produits','m')?`<button class="btn" onclick="openForm('produits','${p.id}')">✏️ Modifier</button>`:''}<button class="btn pri" onclick="closeM()">Fermer</button></div>`,560)}
+function pgridHtml(L){return L.length?`<div class="box"><div class="pgrid" style="max-height:none">${L.map(p=>`<button class="pt ${p.stock<=0?'out':''}" onclick="prodCard('${p.id}')">${tileImg(p)}<b>${esc(p.name)}</b><span>${esc(p.ref||'')} · Stock ${p.stock}</span><span class="pr">${fmt(p.pv)}</span></button>`).join('')}</div></div>`:'<div class="box"><div class="empty">Aucune donnée pour le moment.</div></div>'}
+const pcell=(id,name)=>{const p=id?pOf(id):D.produits.find(x=>x.name===name);return`<div class="nmw">${p?thumb(p,'s'):`<div class="th s ph">${esc(String(name||'?').trim().charAt(0).toUpperCase())}</div>`}<span>${esc(name)}</span></div>`};
 
 /* ---------- vues ---------- */
 const VIEW={};
@@ -454,7 +561,7 @@ VIEW.dash=()=>{
    <div class="card"><small>Clients / Fournisseurs</small><b>${D.clients.length} / ${D.fournisseurs.length}</b></div>
   </div>
   <div class="box"><h3>Dernières factures</h3>${last.length?`<table><tbody>${last.map(d=>`<tr><td>${d.num}</td><td>${fd(d.date)}</td><td>${esc(d.tname)}</td><td class="r">${fmt(d.total)}</td><td><span class="tag ${stat(d)[1]}">${stat(d)[0]}</span></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3">Total (${last.length})</td><td class="r">${fmt(last.reduce((a,d)=>a+d.total,0))}</td><td>Reste : ${fmt(last.reduce((a,d)=>a+d.total-(d.paid||0),0))}</td></tr></tfoot></table>`:'<div class="empty">Aucune facture.</div>'}</div>
-  <div class="box"><h3>Produits à réapprovisionner</h3>${al.length?`<table><tbody>${al.slice(0,8).map(p=>`<tr><td>${esc(p.name)}</td><td>${esc(p.depot)}</td><td class="r">Stock : ${p.stock}</td><td><span class="tag ${stockState(p)[1]}">${stockState(p)[0]}</span></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="4">Total produits en alerte : ${al.length}</td></tr></tfoot></table>`:'<div class="empty">Tous les stocks sont corrects.</div>'}</div>`}};
+  <div class="box"><h3>Produits à réapprovisionner</h3>${al.length?`<table><tbody>${al.slice(0,8).map(p=>`<tr><td><div class="nmw">${thumb(p,'s')}<span>${esc(p.name)}</span></div></td><td>${esc(p.depot)}</td><td class="r">Stock : ${p.stock}</td><td><span class="tag ${stockState(p)[1]}">${stockState(p)[0]}</span></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="4">Total produits en alerte : ${al.length}</td></tr></tfoot></table>`:'<div class="empty">Tous les stocks sont corrects.</div>'}</div>`}};
 
 function partyTot(kind,id){const L=kind==='client'?D.docs.facture.filter(d=>d.tid===id):D.reappro.filter(r=>r.fid===id);return{t:L.reduce((a,d)=>a+d.total,0),p:L.reduce((a,d)=>a+(d.paid||0),0)}}
 function partyView(kind){
@@ -487,7 +594,7 @@ function hist(kind,id,fl){
   const sT=hSum(rows,'a'),sP=hSum(rows,'p'),types=[...new Set(all.map(r=>r.t))];
   openM(`<h3>Historique — ${esc(e.name)}</h3>
   <div class="cards"><div class="card"><small>Opérations</small><b>${all.length}</b></div><div class="card"><small>${c?'Total facturé':'Total achats'}</small><b>${fmt(T)}</b></div><div class="card"><small>${c?'Total encaissé':'Total payé'}</small><b>${fmt(P)}</b></div>${cr?`<div class="card"><small>Avance / crédit</small><b>${fmt(cr)}</b></div>`:''}${NT?`<div class="card"><small>Documents non facturés (${nn.length})</small><b>${fmt(NT)}</b></div>`:''}<div class="card ${S>0?'al':''}"><small>${c?'Solde dû':'Solde à payer'}</small><b>${fmt(S)}</b></div></div>
-  <div class="ph"><select onchange="hist('${kind}','${id}',this.value)" style="padding:8px;border:1.5px solid #0b4a2b;border-radius:8px;font-weight:700"><option value="">Toutes les opérations (${all.length})</option>${types.map(t=>`<option value="${t}" ${HF===t?'selected':''}>${HT[t][0]} (${all.filter(r=>r.t===t).length})</option>`).join('')}</select><span style="flex:1"></span><button class="btn" onclick="histPrint('${kind}','${id}')">🖨 Imprimer</button></div>
+  <div class="ph"><select onchange="hist('${kind}','${id}',this.value)" style="padding:8px;border:1.5px solid #0b4a2b;border-radius:8px;font-weight:700"><option value="">Toutes les opérations (${all.length})</option>${types.map(t=>`<option value="${t}" ${HF===t?'selected':''}>${HT[t][0]} (${all.filter(r=>r.t===t).length})</option>`).join('')}</select><span style="flex:1"></span><button class="btn gold" onclick="histPrint('${kind}','${id}')">⬇ PDF</button></div>
   ${tbl(['Date','Type','N°','Détail','>Montant','>'+(c?'Encaissé':'Payé'),'Statut'],rows.map(hTr),`<tr><td colspan="4">Total comptabilisé (${c?'factures':'approvisionnements'})</td><td class="r">${fmt(sT)}</td><td class="r">${fmt(sP)}</td><td></td></tr><tr><td colspan="4">Reste ${c?'à encaisser':'à payer'} sur ces opérations</td><td class="r" colspan="2">${fmt(sT-sP)}</td><td></td></tr>`)}
   <p style="font-size:12px;color:var(--mu)">Les règlements (en italique) sont déjà imputés sur les ${c?'factures':'approvisionnements'} : ils ne sont pas comptés deux fois. Devis, proforma, bons de livraison et de commande ne modifient pas le solde.</p>
   <p class="tot">Solde : <b>${fmt(S)}</b></p><div class="mb"><button class="btn pri" onclick="closeM()">Fermer</button></div>`,980)}
@@ -496,15 +603,14 @@ function histPrint(kind,id){
   $('#pa').innerHTML=`<div class="doc"><div class="dh"><div class="dl">${cp.logo?`<img class="lg" src="${cp.logo}">`:''}<div><div class="cn">${esc(cp.name)}</div></div></div><div class="dr"><div class="dt">HISTORIQUE ${c?'CLIENT':'FOURNISSEUR'}</div><div><b>${esc(e.name)}</b></div><div>Édité le ${fd(today())}</div></div></div>
   <table><thead><tr><th>Date</th><th>Type</th><th>N°</th><th>Détail</th><th>Montant</th><th>${c?'Encaissé':'Payé'}</th><th>Statut</th></tr></thead><tbody>${rows.map(hTr).join('')}</tbody></table>
   <div class="dtot"><div><span>${c?'Total facturé':'Total achats'}</span><b>${fmt(hSum(all,'a'))}</b></div><div><span>${c?'Total encaissé':'Total payé'}</span><b>${fmt(hSum(all,'p'))}</b></div><div class="g"><span>SOLDE</span><b>${fmt(solde(kind,id))}</b></div></div></div>`;
-  $('#pgs').textContent='@page{size:A4;margin:8mm}';
-  setTimeout(()=>{try{window.print()}catch(x){toast('Impression indisponible ici')}},120)}
+  pdfGo(false,'Historique '+(c?'client':'fournisseur')+' - '+e.name)}
 
-VIEW.produits=()=>({h:hd('Produits et stocks','',"openForm('produits')",'Nouveau produit',`<label style="display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" id="onlyal" onchange="res()" style="width:auto;margin:0"> Alertes seulement</label>`),b:()=>{
+VIEW.produits=()=>({h:hd('Produits et stocks','',"openForm('produits')",'Nouveau produit',`<label style="display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" id="onlyal" onchange="res()" style="width:auto;margin:0"> Alertes seulement</label><button class="btn" onclick="PVIEW=PVIEW==='grid'?'table':'grid';res()">🔀 Vue tableau / vignettes</button>`),b:()=>{
   const al=$('#onlyal')&&$('#onlyal').checked;
   const L=D.produits.filter(p=>match(Q,p.name,p.ref,p.cat,p.depot)&&(!al||p.stock<=(+p.seuil||0))).sort((a,b)=>a.name.localeCompare(b.name));
   const vA=D.produits.reduce((a,p)=>a+p.stock*p.pa,0),vV=D.produits.reduce((a,p)=>a+p.stock*p.pv,0);
   return`<div class="cards"><div class="card"><small>Références</small><b>${D.produits.length}</b></div><div class="card"><small>Valeur stock (achat)</small><b>${fmt(vA)}</b></div><div class="card"><small>Valeur stock (vente)</small><b>${fmt(vV)}</b></div><div class="card al"><small>En alerte</small><b>${D.produits.filter(p=>p.stock<=(+p.seuil||0)).length}</b></div><div class="card"><small>Sans photo</small><b>${D.produits.filter(p=>!p.img).length}</b></div></div>`+
-  tbl(['Photo','Réf.','Désignation','Dépôt','>Stock','>Prix achat','>Prix vente','>Valeur achat','>Valeur vente','État','Actions'],L.map(p=>{const s=stockState(p);return`<tr><td>${thumb(p,'',"zoom")}</td><td>${esc(p.ref)}</td><td><b>${esc(p.name)}</b></td><td>${esc(p.depot)}</td><td class="r">${p.stock}</td><td class="r">${num(p.pa)}</td><td class="r">${num(p.pv)}</td><td class="r">${num(p.stock*p.pa)}</td><td class="r">${num(p.stock*p.pv)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${ab('produits',p.id,`${can('produits','o')?`<button class="btn sm" onclick="adjust('${p.id}')">⚖️ Inventaire</button>`:''}`)}</td></tr>`}),`<tr><td colspan="4">Total (${L.length} produits)</td><td class="r">${L.reduce((a,p)=>a+p.stock,0)}</td><td></td><td></td><td class="r">${num(L.reduce((a,p)=>a+p.stock*p.pa,0))}</td><td class="r">${num(L.reduce((a,p)=>a+p.stock*p.pv,0))}</td><td colspan="2"></td></tr>`)}});
+  (PVIEW==='grid'?pgridHtml(L):tbl(['Photo','Réf.','Désignation','Dépôt','>Stock','>Prix achat','>Prix vente','>Valeur achat','>Valeur vente','État','Actions'],L.map(p=>{const s=stockState(p);return`<tr><td>${thumb(p,'',"zoom")}</td><td>${esc(p.ref)}</td><td><b>${esc(p.name)}</b></td><td>${esc(p.depot)}</td><td class="r">${p.stock}</td><td class="r">${num(p.pa)}</td><td class="r">${num(p.pv)}</td><td class="r">${num(p.stock*p.pa)}</td><td class="r">${num(p.stock*p.pv)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${ab('produits',p.id,`${can('produits','o')?`<button class="btn sm" onclick="adjust('${p.id}')">⚖️ Inventaire</button>`:''}`)}</td></tr>`}),`<tr><td colspan="4">Total (${L.length} produits)</td><td class="r">${L.reduce((a,p)=>a+p.stock,0)}</td><td></td><td></td><td class="r">${num(L.reduce((a,p)=>a+p.stock*p.pa,0))}</td><td class="r">${num(L.reduce((a,p)=>a+p.stock*p.pv,0))}</td><td colspan="2"></td></tr>`))}});
 function adjust(id){if(!can('produits','o'))return toast('Droit insuffisant');const p=D.produits.find(x=>x.id===id);ask('Inventaire — '+esc(p.name),'Quantité réelle en stock',p.stock,v=>{p.stock=v;save();closeM();render();toast('Stock ajusté')})}
 
 /* vente rapide */
@@ -519,12 +625,12 @@ function ptHtml(){const t=posTot().t,r=POS.paid==null?t:+POS.paid;return`Total :
 function drawPT(){const e=$('#postot');if(e)e.innerHTML=ptHtml()}
 function cartHtml(){
   return`<h3>🛒 Panier (${CART.reduce((a,l)=>a+l.qty,0)} article(s))</h3><div style="padding:10px">
-  <label>Client<select onchange="POS.tid=this.value"><option value="">— Client comptoir —</option>${D.clients.map(c=>`<option value="${c.id}" ${c.id===POS.tid?'selected':''}>${esc(c.name)}</option>`).join('')}</select></label>
+  ${whoField('poswho','clients',POS.tid,'— Client comptoir —','Client','qClientPOS()','POS.tid=this.value')}
   ${CART.length?`<table class="lt" style="margin-top:8px"><thead><tr><th>Produit</th><th class="r">Qté</th><th class="r">Prix</th><th class="r">Total</th><th></th></tr></thead><tbody>${CART.map((l,i)=>`<tr><td><div class="nmw">${thumb(pOf(l.pid),'s')}<span>${esc(l.name)}</span></div></td><td class="r"><input type="number" min="0" value="${l.qty}" style="width:60px" onchange="pset(${i},'qty',this.value)"></td><td class="r"><input type="number" value="${l.price}" onchange="pset(${i},'price',this.value)"></td><td class="r">${num(l.qty*l.price)}</td><td><button class="btn sm dg" onclick="pdel(${i})">✕</button></td></tr>`).join('')}</tbody><tfoot><tr><td>Total brut</td><td class="r">${CART.reduce((a,l)=>a+l.qty,0)}</td><td></td><td class="r">${num(posTot().s)}</td><td></td></tr></tfoot></table>`:'<div class="empty">Touchez un produit pour l\'ajouter.</div>'}
   <div class="grid2" style="margin-top:8px"><label>Remise (FCFA)<input type="number" value="${POS.remise||0}" oninput="POS.remise=+this.value||0;drawPT()"></label><label>Mode de paiement<select onchange="POS.mode=this.value">${MODES.map(m=>`<option ${m===POS.mode?'selected':''}>${m}</option>`).join('')}</select></label>
   <label class="full">Montant reçu (FCFA) — vide = payé comptant<input type="number" value="${POS.paid==null?'':POS.paid}" placeholder="Montant exact" oninput="POS.paid=this.value===''?null:+this.value;drawPT()"></label></div>
   <div class="tot" id="postot">${ptHtml()}</div>
-  <div class="mb"><button class="btn dg" onclick="pclear()">Vider</button><button class="btn pri" onclick="psale()">✅ Valider</button><button class="btn gold" onclick="psale('ticket')">🎫 Valider + Ticket</button><button class="btn gold" onclick="psale('a4')">🧾 Valider + Facture</button></div></div>`}
+  <div class="mb"><button class="btn dg" onclick="pclear()">Vider</button><button class="btn pri" onclick="psale()">✅ Valider</button><button class="btn gold" onclick="psale('ticket')">🎫 Valider + Ticket</button><button class="btn gold" onclick="psale('pdf')">⬇ Valider + PDF</button></div></div>`}
 async function psale(act){
   if(!can('vente','a'))return toast('Droit insuffisant');
   const lines=CART.filter(l=>l.qty>0).map(l=>({pid:l.pid,ref:l.ref,name:l.name,qty:l.qty,price:l.price}));
@@ -534,21 +640,20 @@ async function psale(act){
   if(!await stockCheck(lines,null))return;
   const w=D.clients.find(x=>x.id===POS.tid),d={id:uid(),num:nextNum('facture',DT.facture.p),date:today(),tid:POS.tid,lines,remise:rem,total:t,paid,given,mode:POS.mode,due:today(),note:'Vente rapide',by:USER.name,tname:w?w.name:'Client comptoir'};
   stockMove(lines,-1);D.docs.facture.push(d);save();
-  CART=[];POS.remise=0;POS.paid=null;POS.tid='';render();pdone(d);
+  CART=[];POS.remise=0;POS.paid=null;POS.tid='';render();preview('facture',d.id);
+  if(d.given>d.total)toast('💵 Monnaie à rendre : '+fmt(d.given-d.total),7000);else if(d.paid<d.total)toast('Reste dû : '+fmt(d.total-d.paid),7000);
   if(act)doPrint('facture',d.id,act)}
 function pdone(d){openM(`<h3>✅ Vente enregistrée</h3><p style="font-size:16px">Facture <b>${d.num}</b> — ${esc(d.tname)}<br>Total : <b>${fmt(d.total)}</b> · Encaissé : <b>${fmt(d.paid)}</b>${d.given>d.total?`<br>Monnaie rendue : <b>${fmt(d.given-d.total)}</b>`:''}${d.paid<d.total?`<br>Reste dû : <b style="color:var(--rd)">${fmt(d.total-d.paid)}</b>`:''}</p>
-  <div class="act"><button class="btn gold" onclick="doPrint('facture','${d.id}','ticket')">🎫 Ticket</button><button class="btn pri" onclick="doPrint('facture','${d.id}','a4')">🧾 Facture A4</button><button class="btn" onclick="doPrint('facture','${d.id}','pdf')">⬇ PDF</button><button class="btn" onclick="wa('facture','${d.id}')">📲 WhatsApp</button></div>
+  <div class="act"><button class="btn gold" onclick="doPrint('facture','${d.id}','ticket')">🎫 Ticket</button><button class="btn pri" onclick="doPrint('facture','${d.id}','pdf')">⬇ Facture PDF</button></div>
   <div class="mb"><button class="btn pri" onclick="closeM()">Nouvelle vente</button></div>`,520)}
 VIEW.vente=()=>{
   if(POS.sid!==SID){CART=[];POS={tid:'',remise:0,paid:null,mode:'Espèces',sid:SID}}
-  return{h:hd('Vente rapide','Comptoir : ticket et facture',null),b:()=>{
+  return{h:hd('Vente rapide','Comptoir — chaque vente est une facture (liste dans la page Factures)',null,'',`${can('produits','a')?'<button class="btn gold" onclick="qProdPOS()">+ Nouveau produit</button>':''}${can('clients','a')?'<button class="btn gold" onclick="qClientPOS()">+ Nouveau client</button>':''}`),b:()=>{
     const L=D.produits.filter(p=>match(Q,p.name,p.ref,p.cat)).sort((a,b)=>a.name.localeCompare(b.name)).slice(0,80);
     const T=D.docs.facture.filter(d=>d.date===today()).sort((a,b)=>b.num.localeCompare(a.num)),tt=T.reduce((a,d)=>a+d.total,0),tp=T.reduce((a,d)=>a+(d.paid||0),0);
     return`<div class="cards"><div class="card"><small>Ventes du jour</small><b>${T.length}</b></div><div class="card"><small>Total du jour</small><b>${fmt(tt)}</b></div><div class="card"><small>Encaissé du jour</small><b>${fmt(tp)}</b></div><div class="card al"><small>Reste du jour</small><b>${fmt(tt-tp)}</b></div></div>
     <div class="pos"><div class="box"><h3 style="display:flex;justify-content:space-between;align-items:center;gap:8px">Produits (${L.length}${D.produits.length>L.length?' affichés':''})<label style="display:flex;gap:5px;align-items:center;font-size:13px;font-weight:400;margin:0"><input type="checkbox" ${POSIMG?'checked':''} onchange="POSIMG=this.checked;res()" style="width:auto;margin:0"> Photos</label></h3>${L.length?`<div class="pgrid">${L.map(p=>`<button class="pt ${p.stock<=0?'out':''}" onclick="padd('${p.id}')">${POSIMG?tileImg(p):''}<b>${esc(p.name)}</b><span>${esc(p.ref||'')} · Stock ${p.stock}</span><span class="pr">${fmt(p.pv)}</span></button>`).join('')}</div>`:'<div class="empty">Aucun produit. Utilisez la recherche ou ajoutez des produits.</div>'}</div>
-    <div class="box pcart" id="poscart">${cartHtml()}</div></div>
-    <h3 style="margin:6px 0;color:var(--g)">Ventes du jour</h3>`+
-    tbl(['N°','Client','>Montant','>Encaissé','>Reste','Actions'],T.map(d=>`<tr><td><b>${d.num}</b></td><td>${esc(d.tname||'—')}</td><td class="r">${fmt(d.total)}</td><td class="r">${fmt(d.paid||0)}</td><td class="r">${fmt(d.total-(d.paid||0))}</td><td><div class="act"><button class="btn sm" onclick="doPrint('facture','${d.id}','ticket')">🎫 Ticket</button><button class="btn sm" onclick="doPrint('facture','${d.id}','a4')">🧾 Facture</button><button class="btn sm" onclick="preview('facture','${d.id}')">👁</button>${can('facture','s')?`<button class="btn sm dg" title="Supprimer cette vente" onclick="delDoc('facture','${d.id}')">🗑</button>`:''}</div></td></tr>`),`<tr><td colspan="2">Total (${T.length})</td><td class="r">${fmt(tt)}</td><td class="r">${fmt(tp)}</td><td class="r">${fmt(tt-tp)}</td><td></td></tr>`)}}};
+    <div class="box pcart" id="poscart">${cartHtml()}</div></div>`}}};
 
 /* réapprovisionnement */
 let RL=[];
@@ -557,16 +662,17 @@ VIEW.reappro=()=>{RL=[];return{h:`<div class="ph"><h2>Ré-approvisionner<small>E
   const RA=D.reappro,rT=RA.reduce((a,r)=>a+r.total,0),rP=RA.reduce((a,r)=>a+r.paid,0);
   return`<div class="cards"><div class="card"><small>Approvisionnements</small><b>${RA.length}</b></div><div class="card"><small>Total achats</small><b>${fmt(rT)}</b></div><div class="card"><small>Total payé</small><b>${fmt(rP)}</b></div><div class="card al"><small>Reste à payer</small><b>${fmt(rT-rP)}</b></div></div><div ${can('reappro','a')?'':'class="hide"'}><div class="box"><h3>Nouvel approvisionnement</h3><div style="padding:12px"><div class="grid2">
    <label>Date<input type="date" id="rdate" value="${today()}"></label>
-   <label>Fournisseur<select id="rf"><option value="">— Aucun —</option>${D.fournisseurs.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join('')}</select></label></div>
+   <div>${whoField('rf','fournisseurs','','— Aucun —','Fournisseur','qFourn()')}</div></div>
    <div class="addl"><label>Produit<input id="rp" list="plist" placeholder="Nom ou référence" onchange="rpick()"></label><label>Quantité<input id="rq" type="number" value="1" min="1"></label><label>Prix d'achat<input id="rpa" type="number" value="0"></label><button class="btn pri" onclick="radd()">Ajouter</button></div>
+   <div class="act" style="margin-bottom:8px"><button class="btn" type="button" onclick="openPicker('rea')">🖼 Choisir dans le catalogue (photos)</button>${can('produits','a')?`<button class="btn gold" type="button" onclick="qProdRea()">+ Nouveau produit</button>`:''}</div>
    <datalist id="plist">${D.produits.map(p=>`<option value="${esc(p.name)}">${esc(p.ref)}</option>`).join('')}</datalist>
    <div id="rlines"></div>
    <div class="grid2" style="margin-top:10px"><label>Montant payé au fournisseur (FCFA)<input id="rpaid" type="number" value="0"></label><label>Mode<select id="rmode">${MODES.map(m=>`<option>${m}</option>`).join('')}</select></label></div>
    <div class="mb"><button class="btn gold" onclick="rsave()">Valider l'approvisionnement</button></div></div></div></div>
-  ${al.length?`<div class="box"><h3>Produits à réapprovisionner (${al.length})</h3><table><tbody>${al.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>Stock : ${p.stock}</td><td>Seuil : ${p.seuil||0}</td><td>${can('reappro','a')?`<button class="btn sm" onclick="rquick('${p.id}')">+ Ajouter</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:''}
-  <div class="box"><h3>Historique des approvisionnements</h3>${D.reappro.length?`<table><thead><tr><th>N°</th><th>Date</th><th>Fournisseur</th><th class="r">Total</th><th class="r">Payé</th><th class="r">Reste</th><th></th></tr></thead><tbody>${D.reappro.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`<tr><td>${r.num}</td><td>${fd(r.date)}</td><td>${esc((D.fournisseurs.find(f=>f.id===r.fid)||{}).name||'—')}</td><td class="r">${fmt(r.total)}</td><td class="r">${fmt(r.paid)}</td><td class="r">${fmt(r.total-r.paid)}</td><td>${can('reappro','s')?`<button class="btn sm dg" onclick="rdel('${r.id}')">🗑</button>`:''}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3">Total (${RA.length})</td><td class="r">${fmt(rT)}</td><td class="r">${fmt(rP)}</td><td class="r">${fmt(rT-rP)}</td><td></td></tr></tfoot></table>`:'<div class="empty">Aucun approvisionnement.</div>'}</div>`}}};
+  ${al.length?`<div class="box"><h3>Produits à réapprovisionner (${al.length})</h3><table><tbody>${al.map(p=>`<tr><td><div class="nmw">${thumb(p,'s')}<b>${esc(p.name)}</b></div></td><td>Stock : ${p.stock}</td><td>Seuil : ${p.seuil||0}</td><td>${can('reappro','a')?`<button class="btn sm" onclick="rquick('${p.id}')">+ Ajouter</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:''}
+  <div class="box"><h3>Historique des approvisionnements</h3>${D.reappro.length?`<table class="ta"><thead><tr><th>N°</th><th>Date</th><th>Fournisseur</th><th class="r">Total</th><th class="r">Payé</th><th class="r">Reste</th><th>Actions</th></tr></thead><tbody>${D.reappro.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`<tr><td>${r.num}</td><td>${fd(r.date)}</td><td>${esc((D.fournisseurs.find(f=>f.id===r.fid)||{}).name||'—')}</td><td class="r">${fmt(r.total)}</td><td class="r">${fmt(r.paid)}</td><td class="r">${fmt(r.total-r.paid)}</td><td>${can('reappro','s')?`<button class="btn sm dg" onclick="rdel('${r.id}')">🗑</button>`:''}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3">Total (${RA.length})</td><td class="r">${fmt(rT)}</td><td class="r">${fmt(rP)}</td><td class="r">${fmt(rT-rP)}</td><td></td></tr></tfoot></table>`:'<div class="empty">Aucun approvisionnement.</div>'}</div>`}}};
 setTimeout(()=>{},0);
-function rdraw(){const e=$('#rlines');if(!e)return;e.innerHTML=RL.length?`<table class="lt"><thead><tr><th>Produit</th><th class="r">Qté</th><th class="r">Prix achat</th><th class="r">Total</th><th></th></tr></thead><tbody>${RL.map((l,i)=>`<tr><td>${esc(l.name)}</td><td class="r">${l.qty}</td><td class="r">${num(l.price)}</td><td class="r">${num(l.qty*l.price)}</td><td><button class="btn sm dg" onclick="RL.splice(${i},1);rdraw()">✕</button></td></tr>`).join('')}</tbody></table><p class="tot">Total : <b>${fmt(sumL(RL))}</b></p>`:''}
+function rdraw(){const e=$('#rlines');if(!e)return;e.innerHTML=RL.length?`<table class="lt"><thead><tr><th>Produit</th><th class="r">Qté</th><th class="r">Prix achat</th><th class="r">Total</th><th></th></tr></thead><tbody>${RL.map((l,i)=>`<tr><td>${pcell(l.pid,l.name)}</td><td class="r">${l.qty}</td><td class="r">${num(l.price)}</td><td class="r">${num(l.qty*l.price)}</td><td><button class="btn sm dg" onclick="RL.splice(${i},1);rdraw()">✕</button></td></tr>`).join('')}</tbody></table><p class="tot">Total : <b>${fmt(sumL(RL))}</b></p>`:''}
 function rpick(){const p=D.produits.find(x=>x.name===$('#rp').value||x.ref===$('#rp').value);if(p){$('#rpa').value=p.pa;$('#rq').focus()}}
 function radd(){const p=D.produits.find(x=>x.name===$('#rp').value||x.ref===$('#rp').value);if(!p)return toast('Choisissez un produit existant');const q=+$('#rq').value;if(q<=0)return toast('Quantité invalide');RL.push({pid:p.id,name:p.name,qty:q,price:+$('#rpa').value||0});$('#rp').value='';$('#rq').value=1;rdraw()}
 function rquick(id){const p=D.produits.find(x=>x.id===id);RL.push({pid:p.id,name:p.name,qty:Math.max(1,(+p.seuil||0)*2-p.stock),price:p.pa});rdraw();toast('Ajouté à la liste')}
@@ -578,7 +684,7 @@ function rsave(){if(!can('reappro','a'))return toast('Droit insuffisant');
   const r={id:uid(),num:nextNum('REC','APP'),date:$('#rdate').value,fid:$('#rf').value,lines:RL,total,paid};
   applyReappro(r.lines,1);D.reappro.push(r);save();toast('Stock mis à jour');render();
 }
-async function rdel(id){if(!can('reappro','s'))return toast('Droit insuffisant');const r=D.reappro.find(x=>x.id===id);if(!await cfm('Supprimer cet approvisionnement et retirer les quantités du stock ?','Supprimer'))return;applyReappro(r.lines,-1);D.reappro=D.reappro.filter(x=>x.id!==id);save();render(1)}
+async function rdel(id){if(!can('reappro','s'))return toast('Droit insuffisant');const r=D.reappro.find(x=>x.id===id);if(!r)return;const neg=r.lines.filter(l=>{const p=D.produits.find(x=>x.id===l.pid);return p&&p.stock-l.qty<0}).length;if(!await cfm('Supprimer cet approvisionnement et retirer les quantités du stock ?'+(neg?'\nAttention : '+neg+' produit(s) auront un stock négatif.':''),'Supprimer'))return;if(!D.reappro.find(x=>x.id===id))return;applyReappro(r.lines,-1);D.reappro=D.reappro.filter(x=>x.id!==id);save();render(1)}
 
 /* ---------- documents ---------- */
 const DT={facture:{t:'Factures',s:'FACTURE',p:'FAC',who:'client'},proforma:{t:'Factures proforma',s:'FACTURE PROFORMA',p:'PRO',who:'client'},bc:{t:'Bons de commande',s:'BON DE COMMANDE',p:'BC',who:'fournisseur'},bl:{t:'Bons de livraison',s:'BON DE LIVRAISON',p:'BL',who:'client'},devis:{t:'Devis',s:'DEVIS',p:'DEV',who:'client'}};
@@ -589,10 +695,10 @@ function docCards(type,L){
   else if(type==='bc'){const o=L.filter(d=>!d.recu);h+=`<div class="card"><small>En attente (${o.length})</small><b>${fmt(s(o))}</b></div>`}
   else if(type==='proforma'||type==='devis'){const o=L.filter(d=>!d.conv);h+=`<div class="card"><small>Ouverts (${o.length})</small><b>${fmt(s(o))}</b></div>`}
   return h+'</div>'}
-VIEW.doc=type=>{
+function docList(type){
   const T=DT[type];
-  return{h:hd(T.t,type==='facture'?'Total du jour : '+fmt(D.docs.facture.filter(d=>d.date===today()).reduce((a,d)=>a+d.total,0)):'',`openDoc('${type}')`),b:()=>{
-    const L=D.docs[type].filter(d=>match(Q,d.num,d.tname,fd(d.date))).sort((a,b)=>b.date.localeCompare(a.date)||b.num.localeCompare(a.num));
+  return(()=>{
+    const L=D.docs[type].filter(d=>match(QD,d.num,d.tname,fd(d.date))).sort((a,b)=>b.date.localeCompare(a.date)||b.num.localeCompare(a.num));
     const f=type==='facture';
     return docCards(type,L)+tbl(['N°','Date',T.who==='client'?'Client':'Fournisseur','>Montant',...(f?['>Encaissé','>Reste']:[]),f?'Statut':'État','Actions'],L.map(d=>{
       let st='',x='';
@@ -600,51 +706,44 @@ VIEW.doc=type=>{
       else if(type==='bc'){st=d.recu?'<span class="tag t-ok">Reçu</span>':'<span class="tag t-w">En attente</span>';if(!d.recu&&can(type,'o'))x=`<button class="btn sm" onclick="receive('${d.id}')">📦 Réceptionner</button>`}
       else if(type==='proforma'||type==='devis'){st=d.conv?`<span class="tag t-ok">Facturé ${d.conv}</span>`:'<span class="tag t-n">Ouvert</span>';if(!d.conv&&can(type,'o'))x=`<button class="btn sm" onclick="convert('${type}','${d.id}')">➡ Facturer</button>`}
       else st='<span class="tag t-n">Émis</span>';
-      return`<tr><td><b>${d.num}</b></td><td>${fd(d.date)}</td><td>${esc(d.tname||'—')}</td><td class="r">${fmt(d.total)}</td>${f?`<td class="r">${fmt(d.paid||0)}</td><td class="r" style="color:${d.total-(d.paid||0)>0?'var(--rd)':'inherit'}">${fmt(d.total-(d.paid||0))}</td>`:''}<td>${st}</td><td><div class="act"><button class="btn sm" onclick="preview('${type}','${d.id}')">👁 Aperçu</button><button class="btn sm" onclick="doPrint('${type}','${d.id}','a4')">🖨 Imprimer</button><button class="btn sm" onclick="doPrint('${type}','${d.id}','pdf')">⬇ PDF</button>${x}${can(type,'m')?`<button class="btn sm" onclick="openDoc('${type}','${d.id}')">✏️</button>`:''}${can(type,'s')?`<button class="btn sm dg" title="Supprimer" onclick="delDoc('${type}','${d.id}')">🗑</button>`:''}</div></td></tr>`}),
-      `<tr><td colspan="3">Total (${L.length})</td><td class="r">${fmt(L.reduce((a,d)=>a+d.total,0))}</td>${f?`<td class="r">${fmt(L.reduce((a,d)=>a+(d.paid||0),0))}</td><td class="r">${fmt(L.reduce((a,d)=>a+d.total-(d.paid||0),0))}</td>`:''}<td colspan="2"></td></tr>`)}}};
+      return`<tr><td><b>${d.num}</b></td><td>${fd(d.date)}</td><td>${esc(d.tname||'—')}</td><td class="r">${fmt(d.total)}</td>${f?`<td class="r">${fmt(d.paid||0)}</td><td class="r" style="color:${d.total-(d.paid||0)>0?'var(--rd)':'inherit'}">${fmt(d.total-(d.paid||0))}</td>`:''}<td>${st}</td><td><div class="act"><button class="btn sm" onclick="preview('${type}','${d.id}')">👁 Aperçu</button><button class="btn sm" onclick="doPrint('${type}','${d.id}','pdf')">⬇ PDF</button>${x}${can(type,'m')?`<button class="btn sm" onclick="openDoc('${type}','${d.id}')">✏️</button>`:''}${can(type,'s')?`<button class="btn sm dg" title="Supprimer" onclick="delDoc('${type}','${d.id}')">🗑</button>`:''}</div></td></tr>`}),
+      `<tr><td colspan="3">Total (${L.length})</td><td class="r">${fmt(L.reduce((a,d)=>a+d.total,0))}</td>${f?`<td class="r">${fmt(L.reduce((a,d)=>a+(d.paid||0),0))}</td><td class="r">${fmt(L.reduce((a,d)=>a+d.total-(d.paid||0),0))}</td>`:''}<td colspan="2"></td></tr>`)})()}
 let F=null;
 function whoList(type){return DT[type].who==='client'?D.clients:D.fournisseurs}
+const newF=type=>({type,id:null,o:{date:today(),tid:'',lines:[],remise:0,paid:0,mode:'Espèces',note:'',due:today()}});
+let QD='';
+const docPrice=p=>F&&F.type==='bc'?p.pa:p.pv;
 function openDoc(type,id,pre){if(!can(type,id?'m':'a'))return toast('Droit insuffisant');
-  const T=DT[type];
-  const o=id?JSON.parse(JSON.stringify(D.docs[type].find(x=>x.id===id))):(pre||{date:today(),tid:'',lines:[],remise:0,paid:0,mode:'Espèces',note:''});
-  F={type,id,o};const f=type==='facture';
-  openM(`<h3>${id?'Modifier':'Nouveau'} — ${T.s}${id?' '+o.num:''}</h3>
-  <div class="grid2"><label>Date<input type="date" id="fdate" value="${o.date}"></label>
-  <label>${T.who==='client'?'Client':'Fournisseur'}<select id="fwho"><option value="">${T.who==='client'?'— Client comptoir —':'— Choisir —'}</option>${whoList(type).map(w=>`<option value="${w.id}" ${w.id===o.tid?'selected':''}>${esc(w.name)}</option>`).join('')}</select></label>${f?`<label>Échéance<input type="date" id="fdue" value="${o.due||o.date}"></label>`:''}</div>
-  <div class="addl"><label>Produit / service<input id="fprod" list="dlist" placeholder="Rechercher un produit…" onchange="fpick()"></label><label>Qté<input id="fqty" type="number" value="1" min="0"></label><label>Prix unitaire<input id="fprice" type="number" value="0"></label><button class="btn pri" onclick="fadd()">Ajouter</button></div>
-  <datalist id="dlist">${D.produits.map(p=>`<option value="${esc(p.name)}">${esc(p.ref)} — stock ${p.stock}</option>`).join('')}</datalist>
-  <div id="fpv"></div><div class="box" style="margin:0"><div id="fl"></div></div>
-  <div class="grid2" style="margin-top:10px"><label>Remise (FCFA)<input type="number" id="frem" value="${o.remise||0}" oninput="drawTot()"></label>
-  ${f?`<label>Montant encaissé (FCFA)<input type="number" id="fpaid" value="${o.paid||0}" oninput="drawTot()"></label><label>Mode de paiement<select id="fmode">${MODES.map(m=>`<option ${m===o.mode?'selected':''}>${m}</option>`).join('')}</select></label>`:''}
-  <label class="full">Note<input id="fnote" value="${esc(o.note||'')}"></label></div>
-  <div class="tot" id="ftot"></div>
-  <div class="mb"><button class="btn" onclick="closeM()">Annuler</button><button class="btn pri" onclick="saveDoc()">Enregistrer</button></div>`);
-  drawLines();
-}
-function fpick(){const p=D.produits.find(x=>x.name===$('#fprod').value||x.ref===$('#fprod').value);if(p){$('#fprice').value=F.type==='bc'?p.pa:p.pv;$('#fqty').focus();$('#fpv').innerHTML=`<div class="fpv">${thumb(p,'m')}<div><b>${esc(p.name)}</b><br><span>${esc(p.ref||'')} · Stock : ${p.stock} · ${fmt(F.type==='bc'?p.pa:p.pv)}</span></div></div>`}}
-function fadd(){
-  const n=$('#fprod').value.trim(),q=+$('#fqty').value,pr=+$('#fprice').value||0;
-  if(!n||q<=0)return toast('Saisissez un produit et une quantité');
-  const p=D.produits.find(x=>x.name===n||x.ref===n);
-  F.o.lines.push({pid:p?p.id:'',ref:p?p.ref:'',name:p?p.name:n,qty:q,price:pr});
-  $('#fprod').value='';$('#fqty').value=1;$('#fprice').value=0;$('#fpv').innerHTML='';drawLines();$('#fprod').focus();
-}
-function drawLines(){
-  const L=F.o.lines;
-  $('#fl').innerHTML=L.length?`<table class="lt"><thead><tr><th>Désignation</th><th class="r">Qté</th><th class="r">Prix</th><th class="r">Total</th><th></th></tr></thead><tbody>${L.map((l,i)=>`<tr><td><div class="nmw">${thumb(pOf(l.pid),'s')}<input class="nm" value="${esc(l.name)}" onchange="F.o.lines[${i}].name=this.value"></div></td><td class="r"><input type="number" value="${l.qty}" onchange="updL(${i},'qty',this.value)"></td><td class="r"><input type="number" value="${l.price}" onchange="updL(${i},'price',this.value)"></td><td class="r" id="lt${i}">${num(l.qty*l.price)}</td><td><button class="btn sm dg" onclick="F.o.lines.splice(${i},1);drawLines()">✕</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Aucune ligne. Ajoutez des produits ci-dessus.</div>';
-  drawTot();
-}
+  const o=id?JSON.parse(JSON.stringify(D.docs[type].find(x=>x.id===id))):(pre||newF(type).o);
+  F={type,id,o};closeM();closeM2();page=type;Q='';render();window.scrollTo(0,0)}
+function docAdd(id){const p=pOf(id);if(!p||!F)return;const l=F.o.lines.find(x=>x.pid===id);if(l)l.qty++;else F.o.lines.push({pid:id,ref:p.ref,name:p.name,qty:1,price:+docPrice(p)||0});drawLines()}
+function linesHtml(){const L=F.o.lines;return L.length?`<table class="lt"><thead><tr><th>Produit</th><th class="r">Qté</th><th class="r">Prix</th><th class="r">Total</th><th></th></tr></thead><tbody>${L.map((l,i)=>`<tr><td><div class="nmw">${thumb(pOf(l.pid),'s')}<input class="nm" value="${esc(l.name)}" onchange="F.o.lines[${i}].name=this.value"></div></td><td class="r"><input type="number" min="0" value="${l.qty}" style="width:60px" onchange="updL(${i},'qty',this.value)"></td><td class="r"><input type="number" value="${l.price}" onchange="updL(${i},'price',this.value)"></td><td class="r" id="lt${i}">${num(l.qty*l.price)}</td><td><button class="btn sm dg" onclick="F.o.lines.splice(${i},1);drawLines()">✕</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Touchez un produit pour l\'ajouter</div>'}
+function drawLines(){const e=$('#fl');if(e)e.innerHTML=linesHtml();drawTot()}
 function updL(i,k,v){F.o.lines[i][k]=+v||0;const l=F.o.lines[i];$('#lt'+i).textContent=num(l.qty*l.price);drawTot()}
-function drawTot(){
-  const s=sumL(F.o.lines),r=+($('#frem')||{}).value||0,t=Math.max(0,s-r);let h=`Total : <b>${fmt(t)}</b>`;
-  if(F.type==='facture'){const p=+($('#fpaid')||{}).value||0;h+=`<br>Reste à payer : <b>${fmt(Math.max(0,t-p))}</b>`}
-  $('#ftot').innerHTML=h;
-}
+function totHtml(){const s=sumL(F.o.lines),r=+F.o.remise||0,t=Math.max(0,s-r);let h=`Total : <b>${fmt(t)}</b>`;if(F.type==='facture')h+=`<br>Reste à payer : <b>${fmt(Math.max(0,t-(+F.o.paid||0)))}</b>`;return h}
+function drawTot(){const e=$('#ftot');if(e)e.innerHTML=totHtml()}
+function docReset(){F=null;render(1)}
+function docFormHtml(){const T=DT[F.type],o=F.o,f=F.type==='facture',cl=T.who==='client';
+  return`<h3 style="display:flex;justify-content:space-between;gap:8px;align-items:center">${F.id?'✏️ Modifier '+esc(o.num||''):'🧾 Nouveau — '+T.s}${F.id?`<button class="btn sm" onclick="docReset()">Annuler la modification</button>`:''}</h3><div style="padding:10px">
+  <div class="grid2"><label>Date<input type="date" id="fdate" value="${o.date}" oninput="F.o.date=this.value"></label>${f?`<label>Échéance<input type="date" id="fdue" value="${o.due||o.date}" oninput="F.o.due=this.value"></label>`:''}</div>
+  <div style="margin-top:8px">${whoField('fwho',cl?'clients':'fournisseurs',o.tid,cl?'— Client comptoir —':'— Choisir —',cl?'Client':'Fournisseur','qWho()','F.o.tid=this.value')}</div>
+  <div class="box" style="margin:10px 0 0"><div id="fl">${linesHtml()}</div></div>
+  <div class="grid2" style="margin-top:8px"><label>Remise (FCFA)<input type="number" id="frem" value="${o.remise||0}" oninput="F.o.remise=+this.value||0;drawTot()"></label>${f?`<label>Montant encaissé (FCFA)<input type="number" id="fpaid" value="${o.paid||0}" oninput="F.o.paid=+this.value||0;drawTot()"></label><label>Mode de paiement<select id="fmode" onchange="F.o.mode=this.value">${MODES.map(m=>`<option ${m===o.mode?'selected':''}>${m}</option>`).join('')}</select></label>`:''}<label class="full">Note<input id="fnote" value="${esc(o.note||'')}" oninput="F.o.note=this.value"></label></div>
+  <div class="tot" id="ftot">${totHtml()}</div>
+  <div class="mb"><button class="btn dg" onclick="docReset()">Vider</button><button class="btn pri" onclick="saveDoc()">✅ Enregistrer</button><button class="btn gold" onclick="saveDoc(1)">⬇ Enregistrer + PDF</button></div></div>`}
+function drawDocList(){const e=$('#doclist');if(e)e.innerHTML=docList(page)}
+VIEW.doc=type=>{const T=DT[type],cl=T.who==='client';if(!F||F.type!==type)F=newF(type);
+  const ex=`${can('produits','a')?'<button class="btn gold" onclick="qProdDoc()">+ Nouveau produit</button>':''}${can(cl?'clients':'fournisseurs','a')?`<button class="btn gold" onclick="qWho()">+ Nouveau ${T.who}</button>`:''}`;
+  return{h:hd(T.t,type==='facture'?'Total du jour : '+fmt(D.docs.facture.filter(d=>d.date===today()).reduce((a,d)=>a+d.total,0)):'',null,'',ex),b:()=>{
+    const L=D.produits.filter(p=>match(Q,p.name,p.ref,p.cat)).sort((a,b)=>a.name.localeCompare(b.name)).slice(0,80);
+    const build=can(type,'a')||F.id;
+    return(build?`<div class="pos"><div class="box"><h3 style="display:flex;justify-content:space-between;align-items:center;gap:8px">Produits (${L.length}${D.produits.length>L.length?' affichés':''})<label style="display:flex;gap:5px;align-items:center;font-size:13px;font-weight:400;margin:0"><input type="checkbox" ${POSIMG?'checked':''} onchange="POSIMG=this.checked;res()" style="width:auto;margin:0"> Photos</label></h3>${L.length?`<div class="pgrid">${L.map(p=>`<button class="pt ${p.stock<=0?'out':''}" onclick="docAdd('${p.id}')">${POSIMG?tileImg(p):''}<b>${esc(p.name)}</b><span>${esc(p.ref||'')} · Stock ${p.stock}</span><span class="pr">${fmt(docPrice(p))}</span></button>`).join('')}</div>`:'<div class="empty">Aucun produit. Utilisez la recherche ou « + Nouveau produit ».</div>'}</div><div class="box" id="docform">${docFormHtml()}</div></div>`:'')+
+    `<div class="ph" style="margin-top:6px"><h2 style="font-size:20px">Documents enregistrés</h2><input type="search" id="dqs" placeholder="🔍 Rechercher un document (n°, client, date)…" value="${esc(QD)}" oninput="QD=this.value;drawDocList()"></div><div id="doclist">${docList(type)}</div>`}}};
 async function stockCheck(lines,old){
   const bad=[];lines.forEach(l=>{const p=D.produits.find(x=>x.id===l.pid);if(!p)return;const av=p.stock+(old||[]).filter(x=>x.pid===l.pid).reduce((a,x)=>a+x.qty,0);const need=lines.filter(x=>x.pid===l.pid).reduce((a,x)=>a+x.qty,0);if(need>av&&!bad.includes(p.name))bad.push(p.name+' (dispo : '+av+')')});
   return!bad.length||await cfm('Stock insuffisant pour :\n'+bad.join('\n')+'\n\nContinuer quand même ?','Continuer')}
 function stockMove(lines,sign){lines.forEach(l=>{const p=D.produits.find(x=>x.id===l.pid);if(p)p.stock+=sign*l.qty})}
-async function saveDoc(){
+async function saveDoc(pdfAfter){
   const{type,id,o}=F;if(!can(type,id?'m':'a'))return toast('Droit insuffisant');if(!o.lines.length)return toast('Ajoutez au moins une ligne');
   const old=id?D.docs[type].find(x=>x.id===id):null;
   if(type==='facture'&&!await stockCheck(o.lines,old&&old.lines))return;
@@ -658,12 +757,15 @@ async function saveDoc(){
   if(type==='facture')stockMove(o.lines,-1);
   if(id){const i=D.docs[type].findIndex(x=>x.id===id);D.docs[type][i]=Object.assign(old,o)}
   else{o.id=uid();o.num=nextNum(type,DT[type].p);D.docs[type].push(o)}
-  save();closeM();render();toast('Enregistré');
+  save();const sid=id||o.id;F=null;closeM();render();toast('Enregistré');preview(type,sid);if(pdfAfter===1)doPrint(type,sid,'pdf');
 }
 async function delDoc(type,id){if(!can(type,'s'))return toast('Droit insuffisant');
-  if(!await cfm('Supprimer ce document ?','Supprimer'))return;
-  const d=D.docs[type].find(x=>x.id===id);if(type==='facture')stockMove(d.lines,1);
-  D.docs[type]=D.docs[type].filter(x=>x.id!==id);save();render(1);toast('Supprimé');
+  const d0=D.docs[type].find(x=>x.id===id);if(!d0)return;
+  const lp=type==='facture'?D.paiements.filter(x=>x.kind==='client'&&x.ref===d0.num&&x.tid===d0.tid):[];
+  if(!await cfm('Supprimer ce document ?'+(type==='facture'?'\nLe stock sera remis.'+(lp.length?'\n'+lp.length+' règlement(s) lié(s) à cette facture seront aussi supprimés.':''):''),'Supprimer'))return;
+  const d=D.docs[type].find(x=>x.id===id);if(!d)return;
+  if(type==='facture'){stockMove(d.lines,1);if(lp.length)D.paiements=D.paiements.filter(x=>!lp.includes(x))}
+  D.docs[type]=D.docs[type].filter(x=>x.id!==id);if(F&&F.id===id)F=null;save();render(1);toast('Supprimé');
 }
 function encaisser(id){if(!can('facture','o'))return toast('Droit insuffisant');const d=D.docs.facture.find(x=>x.id===id);ask('Encaisser — '+d.num,'Montant (reste : '+fmt(d.total-d.paid)+')',d.total-d.paid,v=>{if(v<=0)return toast('Montant invalide');d.paid=Math.min(d.total,d.paid+v);D.paiements.push({id:uid(),date:today(),kind:'client',tid:d.tid,amount:v,mode:$('#paymode').value,ref:d.num});save();closeM();render();toast('Paiement enregistré')},`<label style="margin-top:10px">Mode de paiement<select id="paymode">${MODES.map(m=>`<option>${m}</option>`).join('')}</select></label>`)}
 function convert(type,id){if(!can(type,'o'))return toast('Droit insuffisant');
@@ -676,7 +778,7 @@ function openDocFromConvert(type,d){
   const orig=window.saveDoc;
 }
 const _sd=saveDoc;
-saveDoc=function(){const from=F&&F.from;const n=D.docs.facture.length;_sd();if(from&&D.docs.facture.length>n){const s=D.docs[from.type].find(x=>x.id===from.id);if(s){s.conv=D.docs.facture[D.docs.facture.length-1].num;save();render()}}};
+saveDoc=async function(a){const from=F&&F.from;const n=D.docs.facture.length;await _sd(a);if(from&&D.docs.facture.length>n){const s=D.docs[from.type].find(x=>x.id===from.id);if(s){s.conv=D.docs.facture[D.docs.facture.length-1].num;save();render()}}};
 async function receive(id){if(!can('bc','o'))return toast('Droit insuffisant');
   const d=D.docs.bc.find(x=>x.id===id);if(!await cfm('Réceptionner ce bon de commande et ajouter les quantités au stock ?','Réceptionner'))return;
   const r={id:uid(),num:nextNum('REC','APP'),date:today(),fid:d.tid,lines:d.lines.filter(l=>l.pid),total:d.total,paid:0,src:d.num};
@@ -727,9 +829,75 @@ function ticketHtml(d,type){
   <table>${d.lines.map(l=>`<tr><td colspan="2">${esc(l.name)}</td></tr><tr><td>${l.qty} x ${num(l.price)}</td><td style="text-align:right">${num(l.qty*l.price)}</td></tr>`).join('')}</table><hr>
   <table><tr><td><b>TOTAL</b></td><td style="text-align:right"><b>${fmt(d.total)}</b></td></tr><tr><td>Encaissé</td><td style="text-align:right">${num(d.paid)}</td></tr><tr><td>Reste</td><td style="text-align:right">${num(d.total-d.paid)}</td></tr>${d.given>d.total?`<tr><td>Reçu</td><td style="text-align:right">${num(d.given)}</td></tr><tr><td>Rendu</td><td style="text-align:right">${num(d.given-d.total)}</td></tr>`:''}</table><hr><div class="c">${esc(c.footer)}</div></div>`}
 const getDoc=(type,id)=>D.docs[type].find(x=>x.id===id);
+
+/* ===== PDF direct (sans boîte d'impression) ===== */
+async function savePdf(landscape,name){
+  const PW=landscape?1123:794,PH=landscape?794:1123,M=30;
+  const wrap=document.createElement('div');
+  wrap.setAttribute('xmlns','http://www.w3.org/1999/xhtml');
+  wrap.style.cssText='width:'+PW+'px;padding:'+M+'px;background:#fff;color:#000;font-family:Segoe UI,Arial,sans-serif;box-sizing:border-box;position:absolute;left:-99999px;top:0';
+  const st=document.createElement('style');
+  st.textContent=Array.from(document.querySelectorAll('style')).map(x=>x.id==='pgs'?'':x.textContent).join('\n')+'\n.inv{min-height:1000px!important}';
+  wrap.appendChild(st);
+  const inner=document.createElement('div');inner.innerHTML=$('#pa').innerHTML;wrap.appendChild(inner);
+  document.body.appendChild(wrap);
+  let xml,H,rows;
+  try{
+    H=Math.ceil(wrap.scrollHeight);const base=wrap.getBoundingClientRect().top;
+    rows=[...wrap.querySelectorAll('tr')].map(r=>Math.floor(r.getBoundingClientRect().bottom-base));
+    wrap.style.position='static';wrap.style.left='auto';
+    xml=new XMLSerializer().serializeToString(wrap);
+  }finally{wrap.remove()}
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+PW+'" height="'+H+'"><foreignObject x="0" y="0" width="'+PW+'" height="'+H+'">'+xml+'</foreignObject></svg>';
+  const img=new Image();
+  await new Promise((ok,ko)=>{img.onload=ok;img.onerror=()=>ko(new Error('img'));img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)});
+  const sc=Math.min(2,14000/H);
+  const cv=document.createElement('canvas');cv.width=Math.round(PW*sc);cv.height=Math.round(H*sc);
+  const cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,cv.width,cv.height);cx.scale(sc,sc);cx.drawImage(img,0,0);
+  const pw=landscape?841.89:595.28,ph=landscape?595.28:841.89,pages=[];
+  let y0=0;
+  while(y0<H-1){
+    let end=H;
+    if(y0+PH<H){end=y0+PH;const c=rows.filter(b=>b<=y0+PH&&b>y0+PH*0.5);if(c.length)end=Math.max(...c)}
+    const sl=document.createElement('canvas');sl.width=cv.width;sl.height=Math.max(1,Math.round((end-y0)*sc));
+    const sx=sl.getContext('2d');sx.fillStyle='#fff';sx.fillRect(0,0,sl.width,sl.height);
+    sx.drawImage(cv,0,Math.round(y0*sc),cv.width,sl.height,0,0,cv.width,sl.height);
+    const b64=sl.toDataURL('image/jpeg',0.92).split(',')[1],bin=atob(b64),u=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+    pages.push({u,w:sl.width,h:sl.height,hp:(end-y0)*pw/PW});
+    y0=end;
+  }
+  const enc=new TextEncoder(),parts=[],offs=[];let len=0;
+  const push=b=>{if(typeof b==='string')b=enc.encode(b);parts.push(b);len+=b.length};
+  const n=pages.length;
+  push('%PDF-1.4\n');
+  offs[1]=len;push('1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n');
+  offs[2]=len;push('2 0 obj\n<</Type/Pages/Count '+n+'/Kids['+pages.map((_,i)=>(3+3*i)+' 0 R').join(' ')+']>>\nendobj\n');
+  pages.forEach((g,i)=>{
+    const a=3+3*i,b=a+1,c=a+2,cs='q '+pw.toFixed(2)+' 0 0 '+g.hp.toFixed(2)+' 0 '+(ph-g.hp).toFixed(2)+' cm /Im0 Do Q';
+    offs[a]=len;push(a+' 0 obj\n<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+pw.toFixed(2)+' '+ph.toFixed(2)+']/Resources<</XObject<</Im0 '+c+' 0 R>>>>/Contents '+b+' 0 R>>\nendobj\n');
+    offs[b]=len;push(b+' 0 obj\n<</Length '+cs.length+'>>\nstream\n'+cs+'\nendstream\nendobj\n');
+    offs[c]=len;push(c+' 0 obj\n<</Type/XObject/Subtype/Image/Width '+g.w+'/Height '+g.h+'/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length '+g.u.length+'>>\nstream\n');
+    push(g.u);push('\nendstream\nendobj\n');
+  });
+  const xr=len,tot=3+3*n;
+  let x='xref\n0 '+tot+'\n0000000000 65535 f \n';
+  for(let i=1;i<tot;i++)x+=String(offs[i]).padStart(10,'0')+' 00000 n \n';
+  push(x+'trailer\n<</Size '+tot+'/Root 1 0 R>>\nstartxref\n'+xr+'\n%%EOF');
+  const url=URL.createObjectURL(new Blob(parts,{type:'application/pdf'}));
+  const a=document.createElement('a');a.href=url;a.download=String(name||'document').replace(/[\\/:*?"<>|]+/g,'-')+'.pdf';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),8000);
+  toast('PDF téléchargé : '+a.download,3500);
+}
+function pdfGo(landscape,name){
+  toast('Création du PDF…',2000);
+  savePdf(landscape,name).catch(e=>{toast('PDF direct impossible : utilisez « Enregistrer au format PDF » dans la fenêtre d\'impression',5000);setTimeout(()=>{try{window.print()}catch(x){}},700)})
+}
 function doPrint(type,id,mode){
+  if(mode==='a4')mode='pdf';
   const d=getDoc(type,id);
   $('#pa').innerHTML=mode==='ticket'?ticketHtml(d,type):docHtml(d,type);
+  if(mode==='pdf'){pdfGo(false,d.num+(d.tname?' - '+d.tname:''));return}
   $('#pgs').textContent=mode==='ticket'?'@page{size:80mm auto;margin:3mm}':'@page{size:A4;margin:8mm}';
   const t=document.title;document.title=d.num+(d.tname?' - '+d.tname:'');
   window.onafterprint=()=>{document.title=t};
@@ -739,11 +907,9 @@ function doPrint(type,id,mode){
 function preview(type,id){
   const d=getDoc(type,id),f=type==='facture';
   openM(`<div class="act" style="margin-bottom:10px;position:sticky;top:0;background:#fff;padding:6px 0;z-index:2;border-bottom:1px solid var(--bd)">
-  <button class="btn pri" onclick="doPrint('${type}','${id}','a4')">🖨 Imprimer</button>
   <button class="btn gold" onclick="doPrint('${type}','${id}','pdf')">⬇ Télécharger PDF</button>
   ${f?`<button class="btn" onclick="doPrint('${type}','${id}','ticket')">🎫 Ticket</button>`:''}
   ${f&&can(type,'o')?`<button class="btn ${d.stamp==='PAYÉ'?'stp-on':''}" onclick="setStamp('${id}','PAYÉ')">✅ PAYÉ</button><button class="btn ${d.stamp==='PAYÉ ET LIVRÉ'?'stp-on':''}" onclick="setStamp('${id}','PAYÉ ET LIVRÉ')">🚚 PAYÉ ET LIVRÉ</button>`:''}
-  <button class="btn" onclick="wa('${type}','${id}')">📲 WhatsApp</button>
   ${can(type,'m')?`<button class="btn" onclick="closeM();openDoc('${type}','${id}')">✏️ Modifier</button>`:''}
   <button class="btn" style="margin-left:auto" onclick="closeM()">✕ Fermer</button></div>
   ${f&&d.stamp&&can(type,'o')?stCtl(d,id):''}
@@ -777,12 +943,6 @@ async function setStamp(id,v){
   if(reste>0&&!await cfm('Cette facture a encore un solde dû de '+fmt(reste)+'.\nApposer quand même la mention « '+v+' » ?'))return;
   d.stamp=v;save();preview('facture',id);if($('#res'))res();toast('Mention « '+v+' » ajoutée');
 }
-function wa(type,id){
-  const d=getDoc(type,id),w=whoList(type).find(x=>x.id===d.tid)||{};let tel=(w.tel||'').replace(/\D/g,'');if(tel.length===9)tel='221'+tel;
-  const t=`${DT[type].s} ${d.num} — ${D.company.name}\nDate : ${fd(d.date)}\nTotal : ${fmt(d.total)}`+(type==='facture'?`\nReste à payer : ${fmt(d.total-(d.paid||0))}`:'')+`\n${D.company.footer}`;
-  window.open('https://wa.me/'+tel+'?text='+encodeURIComponent(t),'_blank');
-}
-
 /* charges, argent, dépôts */
 function catBox(L){const m={},t=L.reduce((a,c)=>a+c.amount,0);L.forEach(c=>m[c.cat]=(m[c.cat]||0)+c.amount);const k=Object.keys(m).sort();return k.length?`<div class="box"><h3>Total par catégorie</h3><table><tbody>${k.map(x=>`<tr><td>${esc(x)}</td><td class="r">${fmt(m[x])}</td></tr>`).join('')}</tbody><tfoot><tr><td>Total</td><td class="r">${fmt(t)}</td></tr></tfoot></table></div>`:''}
 const sumS=(L,v)=>L.filter(x=>x.sens===v).reduce((a,x)=>a+x.amount,0);
@@ -1003,7 +1163,7 @@ const REP={
 
 const rNum=t=>t==='n'||t==='q'||t==='p';
 function rpFmt(v,t){if(t==='n')return fmt(v);if(t==='q')return typeof v==='number'?v.toLocaleString('fr-FR',{maximumFractionDigits:2}):esc(v);if(t==='d')return fd(v);if(t==='p')return (+v).toLocaleString('fr-FR',{maximumFractionDigits:1})+' %';if(t==='g')return`<span class="tag ${v[1]}">${esc(v[0])}</span>`;return esc(v)}
-function rpParts(R){const c=R.cols,rows=R.rows.map(r=>`<tr>${r.map((v,i)=>`<td class="${rNum(c[i][1])?'r':''}">${rpFmt(v,c[i][1])}</td>`).join('')}</tr>`);
+function rpParts(R){const c=R.cols,rows=R.rows.map(r=>`<tr>${r.map((v,i)=>`<td class="${rNum(c[i][1])?'r':''}">${c[i][0]==='Produit'&&c[i][1]==='t'?pcell('',v):rpFmt(v,c[i][1])}</td>`).join('')}</tr>`);
   const foot=c.some(x=>x[2])?`<tr>${c.map((x,i)=>i===0?`<td>Total (${R.rows.length})</td>`:`<td class="${rNum(x[1])?'r':''}">${x[2]?rpFmt(S(R.rows,r=>r[i]),x[1]):''}</td>`).join('')}</tr>`:'';
   return{heads:c.map(x=>(rNum(x[1])?'>':'')+x[0]),rows,foot}}
 let RPC=null;
@@ -1012,7 +1172,7 @@ function rpBody(key){
   const x=C.r.find(y=>y[0]===k),R=x[2]();R.title=x[1];R.cat=C.t;R.nodate=!!x[3];RPC=R;
   const pre=[['today',"Aujourd'hui"],['week','Semaine'],['month','Mois'],['last','Mois dernier'],['year','Année'],['all','Tout']],P=rpParts(R);
   return`<div class="rtabs">${C.r.map(y=>`<button class="btn ${y[0]===k?'pri':''}" onclick="rpSel('${key}','${y[0]}')">${y[1]}</button>`).join('')}</div>
-  <div class="rbar">${R.nodate?'<b>Situation au '+fd(today())+'</b>':pre.map(p=>`<button class="btn sm ${RPS.pre===p[0]?'gold':''}" onclick="rpPre('${p[0]}')">${p[1]}</button>`).join('')+` Du <input type="date" value="${RPS.from}" onchange="rpCus('from',this.value)"> au <input type="date" value="${RPS.to}" onchange="rpCus('to',this.value)">`}<span style="flex:1"></span><button class="btn sm" onclick="rpCsv()">⬇ Excel (CSV)</button><button class="btn sm" onclick="rpPrint(1)">PDF</button><button class="btn sm pri" onclick="rpPrint()">🖨 Imprimer</button></div>
+  <div class="rbar">${R.nodate?'<b>Situation au '+fd(today())+'</b>':pre.map(p=>`<button class="btn sm ${RPS.pre===p[0]?'gold':''}" onclick="rpPre('${p[0]}')">${p[1]}</button>`).join('')+` Du <input type="date" value="${RPS.from}" onchange="rpCus('from',this.value)"> au <input type="date" value="${RPS.to}" onchange="rpCus('to',this.value)">`}<span style="flex:1"></span><button class="btn sm" onclick="rpCsv()">⬇ Excel (CSV)</button><button class="btn sm pri" onclick="rpPrint(1)">⬇ PDF</button></div>
   <div class="cards">${R.cards.map(c=>`<div class="card ${c[2]?'al':''}"><small>${c[0]}</small><b>${c[1]}</b></div>`).join('')}</div>
   ${tbl(P.heads,P.rows,P.foot)}${R.note?`<p style="font-size:12px;color:var(--mu)">${R.note}</p>`:''}`}
 const rpSel=(key,k)=>{RPS['r_'+key]=k;res()};
@@ -1025,6 +1185,7 @@ function rpPrint(pdf){const R=RPC;if(!R)return;const P=rpParts(R),cp=D.company;
   <table class="rpt"><thead><tr>${P.heads.map(h=>`<th class="${h[0]==='>'?'r':''}">${h.replace(/^>/,'')}</th>`).join('')}</tr></thead><tbody>${P.rows.join('')}</tbody>${P.foot?`<tfoot>${P.foot}</tfoot>`:''}</table>
   ${R.note?`<p class="rpn">${R.note}</p>`:''}<p class="rpn">Édité le ${fd(today())} par ${esc(USER.name)}</p></div>`;
   $('#pgs').textContent='@page{size:A4 '+(R.cols.length>6?'landscape':'portrait')+';margin:8mm}';
+  if(pdf){pdfGo(R.cols.length>6,R.title+' - '+cp.name);return}
   const t=document.title;document.title=R.title+' - '+cp.name;window.onafterprint=()=>{document.title=t};
   if(pdf)toast("Dans la fenêtre qui s'ouvre, choisissez « Enregistrer au format PDF » comme imprimante.",5000);
   setTimeout(()=>{try{window.print()}catch(e){toast('Impression indisponible ici : ouvrez le fichier dans votre navigateur')}},pdf?600:120)}
